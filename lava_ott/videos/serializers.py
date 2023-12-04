@@ -21,7 +21,7 @@ class SubscriptionPlanSerializer(serializers.ModelSerializer):
         )
 
 
-class VideoSerializer(serializers.ModelSerializer):
+class VideoCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
         fields = (
@@ -32,4 +32,25 @@ class VideoSerializer(serializers.ModelSerializer):
             'file',
             'director',
             'cast'
+        )
+
+
+class VideoListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Video
+        fields = (
+            'name',
+            'description',
+            'thumbnail',
+            # 'trailer',
+            # 'file',
+            # 'director',
+            # 'cast',
+            'watch_count',
+            # 'view_on_app',
+            'watch_hours',
+            # 'duration',
+            # 'delete_flag',
+            # 'created_at',
+            # 'created_by'
         )

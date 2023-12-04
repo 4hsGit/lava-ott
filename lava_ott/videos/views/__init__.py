@@ -1,2 +1,3 @@
 from .carousel import *
 from .subscription_plan import *
+from .video import *
