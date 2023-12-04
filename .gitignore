@@ -1,0 +1,9 @@
+env/
+
+.idea
+db.sqlite3
+
+*.pyc
+*.pyo
+
+.dj-env
