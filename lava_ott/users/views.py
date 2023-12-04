@@ -4,8 +4,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework import status, views
 from rest_framework.response import Response
 from .serializers import UserRegistrationSerializer, OTPSendSerializer, OTPVerfySerializer
-from django.views.decorators.csrf import csrf_exempt, csrf_protect
-from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 from twilio.rest import Client
 
 
@@ -28,11 +27,13 @@ class AdminLoginView(views.APIView):
                 # token = generate_token(user)
                 # return Response({'token': token}, status=status.HTTP_200_OK)
 
-                return Response({'message': 'Login successful.'}, status=status.HTTP_200_OK)
+                return Response({'status': True, 'message': 'Login successful.'}, status=status.HTTP_200_OK)
             else:
-                return Response({'error': 'User account is not active.'}, status=status.HTTP_401_UNAUTHORIZED)
+                return Response({'status': False,
+                                 'message': 'User account is not active.'}, status=status.HTTP_401_UNAUTHORIZED)
         else:
-            return Response({'error': 'Invalid username or password.'}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({'status': False, 'message': 'Invalid username or password.'},
+                            status=status.HTTP_401_UNAUTHORIZED)
 
 
 class LogoutView(views.APIView):
@@ -56,8 +57,8 @@ class StatusView(views.APIView):
                 'username': user.username,
                 'is_admin': user.is_admin,
             }
-            response['data'] = data
             response['logged_in'] = True
+            response['data'] = data
             return Response(response)
         else:
             return Response({
@@ -67,12 +68,10 @@ class StatusView(views.APIView):
             })
 
 
-# @method_decorator(csrf_exempt, name='dispatch')
 class UserRegistrationView(views.APIView):
     permission_classes = ()
     authentication_classes = ()
 
-    @csrf_exempt
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data)
         if serializer.is_valid():

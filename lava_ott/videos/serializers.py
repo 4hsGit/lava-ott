@@ -31,7 +31,8 @@ class VideoCreateSerializer(serializers.ModelSerializer):
             'trailer',
             'file',
             'director',
-            'cast'
+            'cast',
+            'created_by'
         )
 
 
@@ -42,15 +43,15 @@ class VideoListSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'thumbnail',
-            # 'trailer',
-            # 'file',
-            # 'director',
-            # 'cast',
+            'trailer',
+            'file',
+            'director',
+            'cast',
             'watch_count',
-            # 'view_on_app',
+            'view_on_app',
             'watch_hours',
-            # 'duration',
-            # 'delete_flag',
-            # 'created_at',
-            # 'created_by'
+            'duration',
+            'delete_flag',
+            'created_at',
+            'created_by'
         )

@@ -5,10 +5,13 @@ from rest_framework import status
 from rest_framework.response import Response
 from ..serializers import VideoCreateSerializer, VideoListSerializer
 from ..models import Video
-from users.utils import format_errors
+from users.utils import format_errors, get_paginated_list
 
 
 class VideoCreateView(APIView):
+    permission_classes = ()
+    authentication_classes = []
+
     def post(self, request, *args, **kwargs):
         video_id = request.data.get('id')
         if video_id:
@@ -33,9 +36,17 @@ class VideoCreateView(APIView):
 
 class VideoListView(APIView):
     def get(self, request):
+        page = request.GET.get('page', 1)
+        per_page = request.GET.get('per_page', 10)
+
         videos = Video.objects.all()
-        serializer = VideoListSerializer(videos, many=True)
-        return Response({'status': True, 'data': serializer.data})
+        data = get_paginated_list(videos, page, per_page)
+        serializer = VideoListSerializer(data['data'], many=True)
+        # return Response({'status': True, 'data': serializer.data})
+        data['status'] = True
+        data['data'] = serializer.data
+        print('data ---- ', data)
+        return Response(data)
 
     def post(self, request):
         video_id = request.data.get('id')
@@ -50,3 +61,6 @@ class VideoDeleteView(APIView):
         video = get_object_or_404(Video, id=video_id)
         video.delete()
         return Response({'status': True, 'message': 'Video deleted.'})
+
+
+
