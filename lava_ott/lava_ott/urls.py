@@ -17,6 +17,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 url_prefix = 'api/'
 
 urlpatterns = [
@@ -24,3 +27,4 @@ urlpatterns = [
     path(f'{url_prefix}users/', include('users.urls')),
     path(f'{url_prefix}videos/', include('videos.urls'))
 ]
+# + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
