@@ -21,7 +21,7 @@ class VideoCreateView(APIView):
             serializer = VideoCreateSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(view_on_app=True)
 
             return Response({
                 'status': True,
@@ -61,6 +61,3 @@ class VideoDeleteView(APIView):
         video = get_object_or_404(Video, id=video_id)
         video.delete()
         return Response({'status': True, 'message': 'Video deleted.'})
-
-
-

@@ -7,6 +7,8 @@ from .serializers import UserRegistrationSerializer, OTPSendSerializer, OTPVerfy
 from django.views.decorators.csrf import csrf_exempt
 from twilio.rest import Client
 
+from .custom_views import CustomAuthenticateAppView
+
 
 class AdminLoginView(views.APIView):
     def post(self, request, *args, **kwargs):
@@ -74,6 +76,13 @@ class UserRegistrationView(views.APIView):
 
     def post(self, request, *args, **kwargs):
         serializer = UserRegistrationSerializer(data=request.data)
+
+        try:
+            get_user_model().objects.get(username=request.data.get('mobile_number'))
+            return Response({'status': False, 'message': 'Mobile number registered already.'})
+        except get_user_model().DoesNotExist:
+            pass
+
         if serializer.is_valid():
             mob_no = request.data.get('mobile_number')
             serializer.save(username=mob_no)
@@ -91,7 +100,7 @@ class UserRegistrationView(views.APIView):
 
 class UserListView(views.APIView):
     def get(self, request, *args, **kwargs):
-        from ..utils import get_paginated_list
+        from .utils import get_paginated_list
 
         page = request.GET.get('page', 1)
         per_page = request.GET.get('per_page', 10)
@@ -137,14 +146,13 @@ class OTPSendView(views.APIView):
                 return Response({'status': False, 'message': 'Mobile number is not registered.'})
 
             account_sid = "AC9b697e7816c22010ceede5954b66f002"
-            auth_token = "83f2ece25d2abe64aabaf0aa0fed1e72"
+            auth_token = "e159554f92a409e53f093c9883bc01bb"
             verify_sid = "VA653068d77433d8edeca4621c2931e41a"
             # verify_sid = "VA22e388ede9ab939094d6bff689f0aa6d"
             # verified_number = "+918078749212"
             verified_number = '+91' + mobile_number
 
             client = Client(account_sid, auth_token)
-            # message = client.messages.create(to='8078749212', from_=verified_number, body='Yourt otp is 111111')
 
             try:
                 verification = client.verify.v2.services(verify_sid) \
@@ -154,7 +162,6 @@ class OTPSendView(views.APIView):
                 return Response({"status": True, "message": 'OTP sent successfully.'})
             except Exception as e:
                 print('OTP send Exception - ', str(e))
-                # return Response({'status': False, 'message': str(e)}, status=500)
                 return Response({'status': False, 'message': 'Couldn\'t send otp.'})
         else:
             return Response(serializer.errors)
@@ -176,7 +183,7 @@ class OTPVerifyView(views.APIView):
 
             try:
                 account_sid = "AC9b697e7816c22010ceede5954b66f002"
-                auth_token = "83f2ece25d2abe64aabaf0aa0fed1e72"
+                auth_token = "e159554f92a409e53f093c9883bc01bb"
                 verify_sid = "VA653068d77433d8edeca4621c2931e41a"
                 # verify_sid = "VA22e388ede9ab939094d6bff689f0aa6d"
                 # verified_number = "+918078749212"
@@ -190,7 +197,7 @@ class OTPVerifyView(views.APIView):
                 print(verification_status)
 
                 if verification_status == 'approved':
-                    from ..utils import generate_token
+                    from .utils import generate_token
                     user = authenticate(request, mobile_number=mobile_number)
                     if user is not None:
                         token = generate_token(user)
@@ -203,10 +210,23 @@ class OTPVerifyView(views.APIView):
                 return Response(response)
             except Exception as e:
                 print('OTP verify exception = ', str(e))
-                # return Response({'status': False, 'message': str(e)}, status=500)
                 return Response({'status': False, 'message': 'Invalid OTP'})
         else:
             return Response(serializer.errors)
+
+
+class UserStatusAppView(CustomAuthenticateAppView):
+    def get_response(self, request, user):
+        from .utils import get_masked_number
+        is_subscriber = user.has_subscription()
+        data = {
+            'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'mobile_number': get_masked_number(user),
+            'is_subscriber': is_subscriber
+        }
+        return Response({'status': True, 'data': data})
 
 
 class UserProfileView(views.APIView):
@@ -214,7 +234,9 @@ class UserProfileView(views.APIView):
 
     def post(self, request):
         token = request.data.get('token')
-        from ..utils import authenticate_token
+        from .utils import authenticate_token
+        from videos.utils import get_orders
+
         try:
             user = authenticate_token(token)
             if user is False:
@@ -222,12 +244,15 @@ class UserProfileView(views.APIView):
         except cryptography.fernet.InvalidToken:
             raise Exception('Invalid token')
 
+        is_subscriber = user.has_subscription()
+
         data = {
             "id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "mobile_number": user.mobile_number,
-            "is_subscriber": user.is_subscriber
+            "is_subscriber": is_subscriber,
+            "orders": get_orders(user)
         }
         return Response({'status': True, 'data': data})
 
