@@ -132,3 +132,8 @@ MEDIA_URL = 'lavaott_media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'users.User'
+
+AUTHENTICATION_BACKENDS = [
+    'users.custom_authentication.AdminAuthenticationBackend',
+    'users.custom_authentication.AppAuthenticationBackend'
+]
