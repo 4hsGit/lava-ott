@@ -20,13 +20,16 @@ def get_paginated_list(data, page=1, per_page=10):
     else:
         previous_page = ''
 
+    data = page_obj.object_list
+
     return {
         "page": page,
         "total_pages": num_pages,
         "next_page": next_page,
         "previous_page": previous_page,
         "total_count": paginator.count,
-        "data": page_obj.object_list
+        "count": len(data),
+        "data": data
     }
 
 
@@ -73,7 +76,7 @@ def decode_token(token):
         print(user_mob, user_id)
         return [user_mob, user_id]
     except:
-        print('Errorr')
+        print('Error')
         return False
 
 
@@ -91,3 +94,13 @@ def authenticate_token(token):
         except User.DoesNotExist:
             print('except User.DoesNotExist:')
             return False
+
+
+def get_masked_number(user):
+    mobile_number = user.mobile_number
+    if mobile_number:
+        l = len(mobile_number)
+        n = l//3
+        mobile_number = str(mobile_number)[:n] + '***' + str(mobile_number)[-(int(n)):]
+        return mobile_number
+    return ''
