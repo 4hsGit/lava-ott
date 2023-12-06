@@ -30,12 +30,12 @@ class Order(models.Model):
 
     subscription_amount = models.FloatField()
     subscription_period = models.CharField(max_length=10)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
 
     created_at = models.DateTimeField(default=timezone.now)
 
-    start_date = models.DateTimeField()
-    expiration_date = models.DateTimeField()
+    start_date = models.DateTimeField(null=True)
+    expiration_date = models.DateTimeField(null=True)
     is_active = models.BooleanField(default=False)
 
 
