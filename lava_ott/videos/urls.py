@@ -20,4 +20,14 @@ urlpatterns = [
     path('video-list/', VideoListView.as_view(), name='video-list'),
     path('video-delete/', VideoDeleteView.as_view(), name='video-delete'),
 ]
+
+# Mobile App
+urlpatterns += [
+    path('app-video-list/', VideoListAppView.as_view(), name='app-video-list'),
+    path('app-order-create/', OrderCreateView.as_view(), name='app-order-create'),
+    path('app-order-list/', OrderListView.as_view(), name='app-order-list'),
+    path('app-check-subscription/', CheckSubscriptionView.as_view(), name='app-check-subscription'),
+    path('app-subscription-create/', SubscriptionView.as_view(), name='app-subscription-create'),
+    path('app-video-play/', VideoPlayView.as_view(), name='app-video-play'),
+]
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

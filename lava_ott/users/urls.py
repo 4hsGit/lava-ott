@@ -10,7 +10,10 @@ urlpatterns = [
     path('otp-send/', OTPSendView.as_view()),
     path('otp-validate/', OTPVerifyView.as_view()),
 
-    path('registration/', UserRegistrationView.as_view()),
     path('list/', UserListView.as_view()),
-    path('profile/', UserProfileView.as_view()),
+
+    # Mobile App
+    path('app/registration/', UserRegistrationView.as_view()),
+    path('app/status/', UserStatusAppView.as_view()),
+    path('app/profile/', UserProfileView.as_view()),
 ]
