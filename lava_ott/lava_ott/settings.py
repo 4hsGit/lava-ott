@@ -137,3 +137,16 @@ AUTHENTICATION_BACKENDS = [
     'users.custom_authentication.AdminAuthenticationBackend',
     'users.custom_authentication.AppAuthenticationBackend'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    # 'DEFAULT_AUTHENTICATION_CLASSES': [
+    #     'rest_framework.authentication.SessionAuthentication',
+    # ]
+}
+
+CSRF_FAILURE_VIEW = 'users.error_handler_views.error_403_view'
+
+# SESSION_COOKIE_AGE = 100
