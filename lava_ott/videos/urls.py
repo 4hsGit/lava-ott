@@ -31,3 +31,5 @@ urlpatterns += [
     path('app-video-play/', VideoPlayView.as_view(), name='app-video-play'),
 ]
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+handler404 = 'users.error_handler_views.error_404_view'
