@@ -40,6 +40,7 @@ class VideoListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
         fields = (
+            'id',
             'name',
             'description',
             'thumbnail',
