@@ -9,8 +9,10 @@ class CustomAuthenticateAppView(APIView):
 
     def post(self, request):
         token = request.data.get('token')
+
         user = authenticate_token(token)
+
         if user is False:
-            return Response({'status': False, 'message': 'Invalid token.'})
+            return Response({'status': 'error', 'logged_in': False, 'message': 'Invalid token.'})
 
         return self.get_response(request, user)
