@@ -5,6 +5,7 @@ from rest_framework import status
 from ..serializers import CarouselSerializer, CarouselListSerializer
 from ..forms import CarouselForm
 from ..models import Carousel
+from users.utils import add_success_response, add_error_response
 
 
 @api_view(['POST'])
@@ -19,14 +20,17 @@ def carousel_create(request):
         Carousel.objects.all().delete()
         Carousel.objects.bulk_create(carousel_objs)
 
-        return Response({'status': True, 'message': 'Carousel created successfully.'},
-                        status=status.HTTP_201_CREATED)
+        data = {'message': 'Carousel created successfully.'}
+        return add_success_response(data, status=status.HTTP_201_CREATED)
+
     else:
-        return Response({'status': False, 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+        data = {'error': serializer.errors}
+        return add_error_response(data, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
 def carousel_list(request):
     carousel = Carousel.objects.all()
-    return Response({'status': True, 'data': [c.image.url for c in carousel]}, status=status.HTTP_200_OK)
+    data = {'data': [c.image.url for c in carousel]}
+    return add_success_response(data, status=status.HTTP_200_OK)
 
