@@ -15,6 +15,11 @@ class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
     image = models.ImageField(upload_to='user_image/', blank=True, null=True)
 
+    # Session
+    keep_logged_in = models.BooleanField(default=False)
+    session_key = models.TextField(blank=True, null=True)
+    session_expire_date = models.DateTimeField(blank=True, null=True)
+
     def has_subscription(self):
         from videos.utils import subscription_exists
         return subscription_exists(self)
@@ -32,3 +37,18 @@ class User(AbstractUser):
             raise MultipleObjectsReturned
 
         return order
+
+    def set_custom_session(self, keep_logged_in=False):
+        from .utils import generate_token
+        from datetime import timedelta
+        if self.keep_logged_in is False:
+            expire_period = timedelta(hours=24)
+        else:
+            expire_period = timedelta(days=30)
+
+        token = generate_token(self)
+        self.session_key = token
+        self.session_expire_date = timezone.now() + expire_period
+        self.save()
+
+        return token
