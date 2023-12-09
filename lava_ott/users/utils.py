@@ -1,9 +1,27 @@
 from django.core.paginator import Paginator, EmptyPage
 from cryptography.fernet import Fernet
+from rest_framework.response import Response
+from django.utils import timezone
 
 
 def format_errors(err):
     return {i: j[0] for i, j in err.items()}
+
+
+def add_success_response(data, status=200):
+    response = {
+        'status': 'success'
+    }
+    response.update(data)
+    return Response(response, status=status)
+
+
+def add_error_response(data, status=500):
+    response = {
+        'status': 'success'
+    }
+    response.update(data)
+    return Response(response, status=status)
 
 
 def get_paginated_list(data, page=1, per_page=10):
@@ -23,6 +41,7 @@ def get_paginated_list(data, page=1, per_page=10):
     data = page_obj.object_list
 
     return {
+        "status": 'success',
         "page": page,
         "total_pages": num_pages,
         "next_page": next_page,
@@ -57,26 +76,29 @@ def generate_token(user):
     mobile_number = user.mobile_number
     user_id = user.id
 
-    data = f'{mobile_number}:{user_id}'
+    data = f'la{mobile_number}::ot{user_id}'
     print('-------- data ---- ', data)
     key = get_key()
     print('key = ', key)
     fernet = Fernet(key)
     encrypted_data = fernet.encrypt(data.encode())
-    return encrypted_data
+    return encrypted_data.decode()
 
 
 def decode_token(token):
     key = get_key()
     decrypted_data = Fernet(key).decrypt(token).decode()
     print('decrypted data = ', decrypted_data)
-    decrypted_data = decrypted_data.split(':')
+    decrypted_data = decrypted_data.split('::')
+    user_mob = decrypted_data[0].replace('la', '')
+    user_id = decrypted_data[1].replace('ot', '')
+
     try:
-        user_mob, user_id = decrypted_data[0].strip(), decrypted_data[1].strip()
+        user_mob, user_id = user_mob.strip(), user_id.strip()
         print(user_mob, user_id)
         return [user_mob, user_id]
-    except:
-        print('Error')
+    except Exception as e:
+        print('Error', str(e))
         return False
 
 
@@ -90,7 +112,18 @@ def authenticate_token(token):
     else:
         from .models import User
         try:
-            return User.objects.get(username=auth_status[0], id=auth_status[1])
+            user = User.objects.get(username=auth_status[0], id=auth_status[1])
+
+            today = timezone.now()
+            if user.session_expire_date:
+                if user.session_expire_date < today:
+                    return False
+
+            if user.session_key != token:
+                return False
+
+            return user
+
         except User.DoesNotExist:
             print('except User.DoesNotExist:')
             return False
