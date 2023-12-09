@@ -14,6 +14,7 @@ class OTPSendSerializer(serializers.Serializer):
 class OTPVerfySerializer(serializers.Serializer):
     mobile_number = serializers.CharField(max_length=10)
     otp = serializers.CharField(min_length=6, max_length=6)
+    keep_logged_in = serializers.BooleanField(default=False)
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):

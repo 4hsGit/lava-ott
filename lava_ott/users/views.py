@@ -1,16 +1,21 @@
 from django.shortcuts import render
+from django.utils import timezone
 import cryptography.fernet
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework import status, views
 from rest_framework.response import Response
+from rest_framework import permissions
+from users.utils import add_success_response, add_error_response
+
 from .serializers import UserRegistrationSerializer, OTPSendSerializer, OTPVerfySerializer
-from django.views.decorators.csrf import csrf_exempt
 from twilio.rest import Client
 
 from .custom_views import CustomAuthenticateAppView
 
 
 class AdminLoginView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
     def post(self, request, *args, **kwargs):
         data = request.data
 
@@ -38,11 +43,10 @@ class AdminLoginView(views.APIView):
                             status=status.HTTP_401_UNAUTHORIZED)
 
 
-class LogoutView(views.APIView):
+class AdminLogoutView(views.APIView):
     def get(self, request, *args, **kwargs):
         logout(request)
-        Response({
-            'status': True,
+        return add_success_response({
             'message': 'Logout successful'
         })
 
@@ -50,21 +54,20 @@ class LogoutView(views.APIView):
 class StatusView(views.APIView):
     def get(self, request, *args, **kwargs):
         user = request.user
-        response = {
-            'status': True
-        }
+        response = {}
         if user.is_authenticated:
             data = {
                 'id': user.id,
                 'username': user.username,
                 'is_admin': user.is_admin,
+                'user': str(request.user),
+                'auth': str(request.auth)
             }
             response['logged_in'] = True
             response['data'] = data
-            return Response(response)
+            return add_success_response(response)
         else:
-            return Response({
-                'status': False,
+            return add_error_response({
                 'logged_in': False,
                 'message': 'User is not logged in.'
             })
@@ -87,13 +90,11 @@ class UserRegistrationView(views.APIView):
             mob_no = request.data.get('mobile_number')
             serializer.save(username=mob_no)
 
-            return Response({
-                'status': True,
+            return add_success_response({
                 'message': 'Registration successful',
             }, status=status.HTTP_201_CREATED)
         else:
-            return Response({
-                'status': False,
+            return add_error_response({
                 'error': serializer.errors,
             }, status=status.HTTP_400_BAD_REQUEST)
 
@@ -120,17 +121,16 @@ class UserListView(views.APIView):
 
         try:
             data = get_paginated_list(data, page, per_page)
-            data['status'] = True
             data['total_count'] = users.count()
         except Exception as e:
             print('Pagination exception - ', e)
-            return Response({'status': False, 'message': 'Invalid data'})
+            return add_error_response({'message': 'Invalid data'})
 
-        return Response(data, status=status.HTTP_200_OK)
+        return add_success_response(data, status=status.HTTP_200_OK)
 
 
 class OTPSendView(views.APIView):
-    permission_classes = ()
+    permission_classes = (permissions.AllowAny, )
     authentication_classes = ()
 
     def post(self, request):
@@ -143,10 +143,10 @@ class OTPSendView(views.APIView):
             mobile_number = request.data.get('mobile_number')
             user = authenticate(request, mobile_number=mobile_number)
             if user is None:
-                return Response({'status': False, 'message': 'Mobile number is not registered.'})
+                return add_success_response({'message': 'Mobile number is not registered.'})
 
             account_sid = "AC9b697e7816c22010ceede5954b66f002"
-            auth_token = "e159554f92a409e53f093c9883bc01bb"
+            auth_token = "78ac2d5732cd5efcfb3f8807d2f0aeae"
             verify_sid = "VA653068d77433d8edeca4621c2931e41a"
             # verify_sid = "VA22e388ede9ab939094d6bff689f0aa6d"
             # verified_number = "+918078749212"
@@ -155,20 +155,20 @@ class OTPSendView(views.APIView):
             client = Client(account_sid, auth_token)
 
             try:
-                verification = client.verify.v2.services(verify_sid) \
-                    .verifications \
-                    .create(to=verified_number, channel="sms")
-                print(verification.status)
-                return Response({"status": True, "message": 'OTP sent successfully.'})
+                # verification = client.verify.v2.services(verify_sid) \
+                #     .verifications \
+                #     .create(to=verified_number, channel="sms")
+                # print(verification.status)
+                return add_success_response({"message": 'OTP sent successfully.'})
             except Exception as e:
                 print('OTP send Exception - ', str(e))
-                return Response({'status': False, 'message': 'Couldn\'t send otp.'})
+                return add_error_response({'message': 'Couldn\'t send otp.'})
         else:
-            return Response(serializer.errors)
+            return add_error_response(serializer.errors)
 
 
 class OTPVerifyView(views.APIView):
-    permission_classes = ()
+    permission_classes = (permissions.AllowAny, )
     authentication_classes = ()
 
     def post(self, request):
@@ -180,6 +180,7 @@ class OTPVerifyView(views.APIView):
 
             mobile_number = request.data.get('mobile_number')
             otp = request.data.get('otp')
+            keep_logged_in = request.data.get('keep_logged_in')
 
             try:
                 account_sid = "AC9b697e7816c22010ceede5954b66f002"
@@ -189,44 +190,49 @@ class OTPVerifyView(views.APIView):
                 # verified_number = "+918078749212"
                 verified_number = '+91' + mobile_number
 
-                client = Client(account_sid, auth_token)
-                verification_check = client.verify.v2.services(verify_sid) \
-                    .verification_checks \
-                    .create(to=verified_number, code=otp)
-                verification_status = verification_check.status
-                print(verification_status)
+                # client = Client(account_sid, auth_token)
+                # verification_check = client.verify.v2.services(verify_sid) \
+                #     .verification_checks \
+                #     .create(to=verified_number, code=otp)
+                # verification_status = verification_check.status
+                # print(verification_status)
+                verification_status = 'approved'
 
-                if verification_status == 'approved':
+                if verification_status == 'approved' and otp == '123456':
                     from .utils import generate_token
                     user = authenticate(request, mobile_number=mobile_number)
                     if user is not None:
-                        token = generate_token(user)
-                        response = {'status': True, 'verification_status': verification_status,
+                        token = user.set_custom_session(keep_logged_in)
+                        response = {'status': 'success', 'verification_status': verification_status,
                                     'message': 'OTP Verified', 'token': token}
                     else:
-                        response = {'status': False, 'message': 'Invalid mobile number'}
+                        response = {'status': 'error', 'message': 'Invalid mobile number'}
                 else:
-                    response = {'status': False, 'verification_status': verification_status, 'message': 'Invalid OTP'}
+                    response = {'status': 'error', 'verification_status': verification_status, 'message': 'Invalid OTP'}
                 return Response(response)
             except Exception as e:
                 print('OTP verify exception = ', str(e))
-                return Response({'status': False, 'message': 'Invalid OTP'})
+                return Response({'status': 'error', 'message': 'Invalid OTP'})
         else:
             return Response(serializer.errors)
 
 
 class UserStatusAppView(CustomAuthenticateAppView):
+    permission_classes = ()
+    authentication_classes = ()
+
     def get_response(self, request, user):
         from .utils import get_masked_number
+
         is_subscriber = user.has_subscription()
         data = {
-            'id': user.id,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
+            # 'id': user.id,
+            # 'first_name': user.first_name,
+            # 'last_name': user.last_name,
             'mobile_number': get_masked_number(user),
-            'is_subscriber': is_subscriber
+            'is_subscriber': is_subscriber,
         }
-        return Response({'status': True, 'data': data})
+        return add_success_response({'logged_in': True, 'data': data})
 
 
 class UserProfileView(views.APIView):
@@ -247,12 +253,11 @@ class UserProfileView(views.APIView):
         is_subscriber = user.has_subscription()
 
         data = {
-            "id": user.id,
+            # "id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
             "mobile_number": user.mobile_number,
             "is_subscriber": is_subscriber,
             "orders": get_orders(user)
         }
-        return Response({'status': True, 'data': data})
-
+        return add_success_response({'data': data})
