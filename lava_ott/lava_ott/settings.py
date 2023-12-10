@@ -25,7 +25,17 @@ SECRET_KEY = 'django-insecure-42zoh+(%^q^)$kypaa6ub83satxd_do!3x=it2kk4f#42m#hzl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+
+path = os.path.join(BASE_DIR, 'lava_ott', '.dj-env')
+if not os.path.exists(path):
+    raise SystemExit(".django-env is not present. Please create one.")
+fp = open(path)
+mode = fp.read().strip()
+
+if mode == 'dev':
+    ALLOWED_HOSTS = []
+if mode == 'uat':
+    ALLOWED_HOSTS = ['bibinab.pythonanywhere.com']
 
 
 # Application definition
