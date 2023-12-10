@@ -6,10 +6,13 @@ from ..serializers import CarouselSerializer, CarouselListSerializer
 from ..forms import CarouselForm
 from ..models import Carousel
 from users.utils import add_success_response, add_error_response
+from users.custom_views import CustomAuthenticateView
+from rest_framework.decorators import authentication_classes, permission_classes
 
 
 @api_view(['POST'])
 def carousel_create(request):
+    print(request.user)
     serializer = CarouselSerializer(data=request.data)
     if serializer.is_valid():
         images = serializer.validated_data.get('image')

@@ -18,7 +18,7 @@ def add_success_response(data, status=200):
 
 def add_error_response(data, status=500):
     response = {
-        'status': 'success'
+        'status': 'error'
     }
     response.update(data)
     return Response(response, status=status)
@@ -114,11 +114,6 @@ def authenticate_token(token):
         try:
             user = User.objects.get(username=auth_status[0], id=auth_status[1])
 
-            today = timezone.now()
-            if user.session_expire_date:
-                if user.session_expire_date < today:
-                    return False
-
             if user.session_key != token:
                 return False
 
@@ -134,6 +129,6 @@ def get_masked_number(user):
     if mobile_number:
         l = len(mobile_number)
         n = l//3
-        mobile_number = str(mobile_number)[:n] + '***' + str(mobile_number)[-(int(n)):]
+        mobile_number = str(mobile_number)[0] + '***' + str(mobile_number)[-3:]
         return mobile_number
     return ''

@@ -51,7 +51,7 @@ class VideoListSerializer(serializers.ModelSerializer):
             'watch_count',
             'view_on_app',
             'watch_hours',
-            # 'duration',
+            'duration',
             # 'delete_flag',
             # 'created_at',
             # 'created_by'
@@ -59,6 +59,8 @@ class VideoListSerializer(serializers.ModelSerializer):
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):
+    subscription_period = serializers.ChoiceField(choices=[('year', 'year'), ('month', 'month')])
+
     class Meta:
         model = Order
         fields = (

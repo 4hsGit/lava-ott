@@ -16,7 +16,6 @@ class User(AbstractUser):
     image = models.ImageField(upload_to='user_image/', blank=True, null=True)
 
     # Session
-    keep_logged_in = models.BooleanField(default=False)
     session_key = models.TextField(blank=True, null=True)
     session_expire_date = models.DateTimeField(blank=True, null=True)
 
@@ -38,15 +37,20 @@ class User(AbstractUser):
 
         return order
 
-    def set_custom_session(self, keep_logged_in=False):
+    def set_custom_session(self, keep_logged_in=False, admin=False):
+        print('keep_logged_in == ', keep_logged_in)
         from .utils import generate_token
         from datetime import timedelta
-        if self.keep_logged_in is False:
+        if admin is True:
+            from django.conf import settings
+            expire_period = timedelta(seconds=settings.SESSION_COOKIE_AGE)
+        elif keep_logged_in is False:
             expire_period = timedelta(hours=24)
         else:
             expire_period = timedelta(days=30)
 
         token = generate_token(self)
+        self.session_key = token
         self.session_key = token
         self.session_expire_date = timezone.now() + expire_period
         self.save()

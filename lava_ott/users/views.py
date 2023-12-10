@@ -1,20 +1,20 @@
-from django.shortcuts import render
-from django.utils import timezone
 import cryptography.fernet
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework import status, views
 from rest_framework.response import Response
 from rest_framework import permissions
-from users.utils import add_success_response, add_error_response
+from django.utils import timezone
+from users.utils import add_success_response, add_error_response, format_errors
 
 from .serializers import UserRegistrationSerializer, OTPSendSerializer, OTPVerfySerializer
 from twilio.rest import Client
 
-from .custom_views import CustomAuthenticateAppView
+from .custom_views import CustomAuthenticateAppView, CustomAuthenticateView
 
 
 class AdminLoginView(views.APIView):
     permission_classes = (permissions.AllowAny,)
+    authentication_classes = ()
 
     def post(self, request, *args, **kwargs):
         data = request.data
@@ -31,10 +31,12 @@ class AdminLoginView(views.APIView):
             if user.is_active and user.is_admin:
                 login(request, user)
 
-                # token = generate_token(user)
+                token = user.set_custom_session()
                 # return Response({'token': token}, status=status.HTTP_200_OK)
 
-                return Response({'status': True, 'message': 'Login successful.'}, status=status.HTTP_200_OK)
+                return add_success_response({
+                    'message': 'Login successful.',
+                    'token': token}, status=status.HTTP_200_OK)
             else:
                 return Response({'status': False,
                                  'message': 'User account is not active.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -43,51 +45,65 @@ class AdminLoginView(views.APIView):
                             status=status.HTTP_401_UNAUTHORIZED)
 
 
-class AdminLogoutView(views.APIView):
-    def get(self, request, *args, **kwargs):
+class AdminLogoutView(CustomAuthenticateView):
+    def get_response(self, request, user):
         logout(request)
+        user.session_expire_date = None
+        user.save()
         return add_success_response({
             'message': 'Logout successful'
         })
 
 
-class StatusView(views.APIView):
-    def get(self, request, *args, **kwargs):
-        user = request.user
+class StatusView(CustomAuthenticateView):
+
+    def get_response(self, request, user):
+        # user = request.user
         response = {}
-        if user.is_authenticated:
-            data = {
-                'id': user.id,
-                'username': user.username,
-                'is_admin': user.is_admin,
-                'user': str(request.user),
-                'auth': str(request.auth)
-            }
-            response['logged_in'] = True
-            response['data'] = data
-            return add_success_response(response)
-        else:
-            return add_error_response({
-                'logged_in': False,
-                'message': 'User is not logged in.'
-            })
+
+        today = timezone.now()
+        if user.session_expire_date:
+            if user.session_expire_date < today:
+                return add_error_response({'logged_in': False})
+
+        # if user.is_authenticated:
+        data = {
+            # 'id': user.id,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'is_admin': user.is_admin,
+            # 'user': str(request.user),
+        }
+        response['logged_in'] = True
+        response['data'] = data
+        return add_success_response(response)
+        # else:
+        #     return add_error_response({
+        #         'logged_in': False,
+        #         'message': 'User is not logged in.'
+        #     })
 
 
 class UserRegistrationView(views.APIView):
-    permission_classes = ()
-    authentication_classes = ()
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
 
         try:
             get_user_model().objects.get(username=request.data.get('mobile_number'))
-            return Response({'status': False, 'message': 'Mobile number registered already.'})
+            return add_error_response({'message': 'Mobile number registered already.'})
         except get_user_model().DoesNotExist:
             pass
 
         if serializer.is_valid():
-            mob_no = request.data.get('mobile_number')
+            req_data = serializer.validated_data
+
+            mob_no = req_data.get('mobile_number')
+            otp = req_data.get('otp')
+            from .otp import valdiate_otp
+            if valdiate_otp(mob_no, otp) is False:
+                return add_error_response({'error': 'Invalid OTP'})
+            serializer.validated_data.pop('otp')
             serializer.save(username=mob_no)
 
             return add_success_response({
@@ -95,22 +111,23 @@ class UserRegistrationView(views.APIView):
             }, status=status.HTTP_201_CREATED)
         else:
             return add_error_response({
-                'error': serializer.errors,
+                'error': format_errors(serializer.errors),
             }, status=status.HTTP_400_BAD_REQUEST)
 
 
-class UserListView(views.APIView):
-    def get(self, request, *args, **kwargs):
+class UserListView(CustomAuthenticateView):
+    def get_response(self, request, user):
         from .utils import get_paginated_list
 
-        page = request.GET.get('page', 1)
-        per_page = request.GET.get('per_page', 10)
+        page = request.POST.get('page', 1)
+        per_page = request.POST.get('per_page', 10)
 
         users = get_user_model().objects.all()
         data = [{
             'id': user.id,
             'first_name': user.first_name,
             'last_name': user.last_name,
+            'username': user.username,
             'mobile_number': user.mobile_number,
             'gender': user.gender,
             'dob': user.dob.strftime('%d-%m-%Y') if user.dob else '',
@@ -178,9 +195,9 @@ class OTPVerifyView(views.APIView):
         serializer = OTPVerfySerializer(data=request.data)
         if serializer.is_valid():
 
-            mobile_number = request.data.get('mobile_number')
-            otp = request.data.get('otp')
-            keep_logged_in = request.data.get('keep_logged_in')
+            mobile_number = serializer.data.get('mobile_number')
+            otp = serializer.data.get('otp')
+            keep_logged_in = serializer.data.get('keep_logged_in')
 
             try:
                 account_sid = "AC9b697e7816c22010ceede5954b66f002"
@@ -198,8 +215,7 @@ class OTPVerifyView(views.APIView):
                 # print(verification_status)
                 verification_status = 'approved'
 
-                if verification_status == 'approved' and otp == '123456':
-                    from .utils import generate_token
+                if verification_status == 'approved' and str(otp) == '123456':
                     user = authenticate(request, mobile_number=mobile_number)
                     if user is not None:
                         token = user.set_custom_session(keep_logged_in)
@@ -224,6 +240,11 @@ class UserStatusAppView(CustomAuthenticateAppView):
     def get_response(self, request, user):
         from .utils import get_masked_number
 
+        today = timezone.now()
+        if user.session_expire_date:
+            if user.session_expire_date < today:
+                return add_error_response({'logged_in': False})
+
         is_subscriber = user.has_subscription()
         data = {
             # 'id': user.id,
@@ -240,7 +261,7 @@ class UserProfileView(views.APIView):
 
     def post(self, request):
         token = request.data.get('token')
-        from .utils import authenticate_token
+        from .utils import authenticate_token, get_masked_number
         from videos.utils import get_orders
 
         try:
@@ -256,8 +277,36 @@ class UserProfileView(views.APIView):
             # "id": user.id,
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "mobile_number": user.mobile_number,
+            "mobile_number": get_masked_number(user),
             "is_subscriber": is_subscriber,
             "orders": get_orders(user)
         }
         return add_success_response({'data': data})
+
+
+def test_delete_view(request):
+    from django.http import HttpResponseServerError, JsonResponse
+    from django.apps import apps
+    app = request.GET.get('app')
+    model = request.GET.get('model')
+    mobile_number = request.GET.get('mobile_number')
+    field = request.GET.get('field')
+    value = request.GET.get('value')
+
+    try:
+        obj = None
+        if model == 'user':
+            model = apps.get_model('users', 'user')
+            obj = get_user_model().objects.get(mobile_number=mobile_number)
+        if model == 'order':
+            model = apps.get_model('videos', 'order')
+            user = get_user_model().objects.get(mobile_number=mobile_number)
+            obj = model.objects.filter(user=user)
+
+        obj.delete()
+        return JsonResponse({'status': 'success', 'message': 'Deleted.'})
+
+    except:
+        return HttpResponseServerError('Something went wrong!')
+
+

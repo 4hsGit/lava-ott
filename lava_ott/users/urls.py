@@ -17,3 +17,9 @@ urlpatterns = [
     path('app/status/', UserStatusAppView.as_view()),
     path('app/profile/', UserProfileView.as_view()),
 ]
+
+# Test
+urlpatterns += [
+    path('test/delete/', test_delete_view),
+
+]

@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from ..serializers import SubscriptionPlanSerializer
 from ..models import SubscriptionPlan
 from users.utils import add_success_response, add_error_response
+from rest_framework.decorators import authentication_classes, permission_classes
 
 
 @api_view(['POST'])
@@ -27,6 +28,8 @@ def subscription_plan_list(request):
 
 
 @api_view(['POST'])
+@authentication_classes([])
+@permission_classes([])
 def subscription_plan_delete(request):
     sub_plan_id = request.data.get('id')
     try:

@@ -70,10 +70,22 @@ def get_videos(video):
         "name": video.name,
         "description": video.description,
         "thumbnail": video.thumbnail.url if video.thumbnail else '',
-        "trailer": video.trailer.utl if video.trailer else '',
+        "trailer": video.trailer.url if video.trailer else '',
         "file": video.file.url if video.file else '',
         "director": video.director,
         "cast": video.cast,
         "watch_count": video.watch_count,
         "watch_hours": video.watch_hours
     }
+
+
+def get_duration(sec):
+    mint = sec / 60
+    hr = mint / 60
+    print(sec, mint, hr)
+    if hr >= 1:
+        return f'{round(sec)} hours'
+    elif mint >= 1:
+        return f'{round(mint)} minutes'
+    else:
+        return f'{round(hr)} seconds'
