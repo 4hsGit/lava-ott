@@ -17,7 +17,7 @@ def subscription_plan_create(request):
         data = {'message': 'Subscription plan created'}
         return add_success_response(data, status=status.HTTP_201_CREATED)
     else:
-        return add_error_response({'error': serializer.errors})
+        return add_error_response({'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])
@@ -28,8 +28,6 @@ def subscription_plan_list(request):
 
 
 @api_view(['POST'])
-@authentication_classes([])
-@permission_classes([])
 def subscription_plan_delete(request):
     sub_plan_id = request.data.get('id')
     try:
@@ -37,4 +35,4 @@ def subscription_plan_delete(request):
         sub_plan.delete()
         return add_success_response({'message': 'Subscription plan deleted.'}, status=status.HTTP_200_OK)
     except SubscriptionPlan.DoesNotExist:
-        return add_error_response({'error': 'ID does not exist.'}, status=status.HTTP_404_NOT_FOUND)
+        return add_error_response({'error': 'ID does not exist.'}, status=status.HTTP_200_OK)

@@ -3,7 +3,7 @@ from .models import Carousel, SubscriptionPlan, Video, Order
 
 
 class CarouselSerializer(serializers.Serializer):
-    image = serializers.ListField(child=serializers.ImageField())
+    image = serializers.ListField(child=serializers.ImageField(), max_length=8)
 
 
 class CarouselListSerializer(serializers.ModelSerializer):

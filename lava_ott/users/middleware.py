@@ -11,17 +11,21 @@ class CustomMiddleWare:
     def __call__(self, request, *args, **kwargs):
         url_path = request.path
         print('Path: ', url_path)
-        x_auth = request.META.get('HTTP_XAUTH')
-        print('authtoken: ', x_auth)
 
         if not self.is_excluded_path(url_path):
+
+            x_auth = request.META.get('HTTP_XAUTH')
+            print('authtoken: ', x_auth)
+            if x_auth is None:
+                return JsonResponse({'logged_in': False, 'message': 'No token found'}, status=401)
+
             decoded_token = jwt_decode(x_auth)
             print('decoded jwt: ', decoded_token)
             user = CustomSession.get_session(decoded_token)
             print('User sessoin: ', user)
             if user is False:
                 request.is_authenticated = False
-                return JsonResponse({'logged_in': False}, status=401)
+                return JsonResponse({'logged_in': False, 'message': 'Session expired or invalid token'}, status=401)
             else:
                 setattr(request, 'customtoken', decoded_token)
                 setattr(request, 'customuser', user)
