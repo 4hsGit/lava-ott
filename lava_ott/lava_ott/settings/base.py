@@ -13,8 +13,7 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -25,18 +24,7 @@ SECRET_KEY = 'django-insecure-42zoh+(%^q^)$kypaa6ub83satxd_do!3x=it2kk4f#42m#hzl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-
-path = os.path.join(BASE_DIR, 'lava_ott', '.dj-env')
-if not os.path.exists(path):
-    raise SystemExit(".django-env is not present. Please create one.")
-fp = open(path)
-mode = fp.read().strip()
-
-if mode == 'dev':
-    ALLOWED_HOSTS = []
-if mode == 'uat':
-    ALLOWED_HOSTS = ['bibinab.pythonanywhere.com']
-
+ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -64,6 +52,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # local
+    'users.middleware.CustomMiddleWare',
 ]
 
 ROOT_URLCONF = 'lava_ott.urls'
@@ -161,4 +152,8 @@ REST_FRAMEWORK = {
 
 CSRF_FAILURE_VIEW = 'users.error_handler_views.error_403_view'
 
-# SESSION_COOKIE_AGE = 100
+SESSION_COOKIE_AGE = 10
+SESSION_SAVE_EVERY_REQUEST = True
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+ADMIN_SESSION_AGE = 100  # In seconds
