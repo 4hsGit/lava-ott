@@ -2,6 +2,20 @@ from django.core.paginator import Paginator, EmptyPage
 from cryptography.fernet import Fernet
 from rest_framework.response import Response
 from django.utils import timezone
+import jwt
+
+
+def jwt_encode(token):
+    payload = {
+        'token': str(token),
+        'iat': timezone.now()
+    }
+    return jwt.encode(payload, 'secretlava#2023', algorithm="HS256")
+
+
+def jwt_decode(token):
+    out = jwt.decode(token, 'secretlava#2023', algorithms=["HS256"])
+    return out['token']
 
 
 def format_errors(err):

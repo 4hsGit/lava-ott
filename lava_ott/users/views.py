@@ -3,13 +3,16 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework import status, views
 from rest_framework.response import Response
 from rest_framework import permissions
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication
 from django.utils import timezone
-from users.utils import add_success_response, add_error_response, format_errors
+from .utils import add_success_response, add_error_response, format_errors
 
 from .serializers import UserRegistrationSerializer, OTPSendSerializer, OTPVerfySerializer
 from twilio.rest import Client
 
 from .custom_views import CustomAuthenticateAppView, CustomAuthenticateView
+from .models import CustomSession
 
 
 class AdminLoginView(views.APIView):
@@ -17,8 +20,12 @@ class AdminLoginView(views.APIView):
     authentication_classes = ()
 
     def post(self, request, *args, **kwargs):
-        data = request.data
+        from .utils import jwt_encode
+        from users.models import CustomSession
 
+        CustomSession.delete_expired_sessions()
+
+        data = request.data
         username = data.get('username', None)
         password = data.get('password', None)
 
@@ -29,14 +36,14 @@ class AdminLoginView(views.APIView):
 
         if user is not None:
             if user.is_active and user.is_admin:
-                login(request, user)
-
-                token = user.set_custom_session()
-                # return Response({'token': token}, status=status.HTTP_200_OK)
+                from users.models import CustomSession
+                token = CustomSession.set_session(user)
+                token = jwt_encode(token)
 
                 return add_success_response({
                     'message': 'Login successful.',
-                    'token': token}, status=status.HTTP_200_OK)
+                    'token': token
+                }, status=status.HTTP_200_OK)
             else:
                 return Response({'status': False,
                                  'message': 'User account is not active.'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -45,30 +52,29 @@ class AdminLoginView(views.APIView):
                             status=status.HTTP_401_UNAUTHORIZED)
 
 
-class AdminLogoutView(CustomAuthenticateView):
-    def get_response(self, request, user):
-        logout(request)
-        user.session_expire_date = None
-        user.save()
+class AdminLogoutView(views.APIView):
+    def get(self, request):
+        CustomSession.delete_session(request.customtoken)
         return add_success_response({
             'message': 'Logout successful'
         })
 
 
-class StatusView(CustomAuthenticateView):
+class StatusView(views.APIView):
+    authentication_classes = []
+    permission_classes = []
 
-    def get_response(self, request, user):
-        # user = request.user
+    def get(self, request):
         response = {}
-
-        today = timezone.now()
-        if user.session_expire_date:
-            if user.session_expire_date < today:
-                return add_error_response({'logged_in': False})
-
-        # if user.is_authenticated:
+        user = request.customuser
+        customtoken = request.customtoken
+        is_authenticated = request.is_authenticated
+        print('customuser: ', user)
+        print('customtoken: ', customtoken)
+        print('is_authenticated: ', is_authenticated)
         data = {
-            # 'id': user.id,
+            'id': user.id,
+            'username': user.username,
             'first_name': user.first_name,
             'last_name': user.last_name,
             'is_admin': user.is_admin,
