@@ -8,7 +8,12 @@ from rest_framework.authentication import SessionAuthentication
 from django.utils import timezone
 from .utils import add_success_response, add_error_response, format_errors
 
-from .serializers import UserRegistrationSerializer, OTPSendSerializer, OTPVerfySerializer
+from .serializers import (
+    UserRegistrationSerializer,
+    OTPSendSerializer,
+    OTPVerfySerializer,
+    RegistrationOTPVerfySerializer,
+)
 from twilio.rest import Client
 
 from .custom_views import CustomAuthenticateAppView, CustomAuthenticateView
@@ -152,9 +157,8 @@ class UserListView(CustomAuthenticateView):
         return add_success_response(data, status=status.HTTP_200_OK)
 
 
-class OTPSendView(views.APIView):
+class AppLoginOTPSendView(views.APIView):
     permission_classes = (permissions.AllowAny, )
-    authentication_classes = ()
 
     def post(self, request):
         print('---------- Request data ---------')
@@ -187,14 +191,14 @@ class OTPSendView(views.APIView):
                 print('OTP send Exception - ', str(e))
                 return add_error_response({'message': 'Couldn\'t send otp.'})
         else:
-            return add_error_response(serializer.errors)
+            return add_error_response(format_errors(serializer.errors), status=400)
 
 
-class OTPVerifyView(views.APIView):
+class AppLoginView(views.APIView):
     permission_classes = (permissions.AllowAny, )
-    authentication_classes = ()
 
     def post(self, request):
+        from users.utils import jwt_encode
         print('---------- Request data ---------')
         print(request.data)
 
@@ -203,7 +207,9 @@ class OTPVerifyView(views.APIView):
 
             mobile_number = serializer.data.get('mobile_number')
             otp = serializer.data.get('otp')
-            keep_logged_in = serializer.data.get('keep_logged_in')
+            keep_me_logged_in = serializer.data.get('keep_me_logged_in')
+
+            print('keep_me_logged_in: ', keep_me_logged_in)
 
             try:
                 account_sid = "AC9b697e7816c22010ceede5954b66f002"
@@ -222,9 +228,13 @@ class OTPVerifyView(views.APIView):
                 verification_status = 'approved'
 
                 if verification_status == 'approved' and str(otp) == '123456':
+
                     user = authenticate(request, mobile_number=mobile_number)
                     if user is not None:
-                        token = user.set_custom_session(keep_logged_in)
+                        CustomSession.delete_expired_sessions()
+
+                        token = CustomSession.set_session(user, session_type='app', keep_me_logged_in=keep_me_logged_in)
+                        token = jwt_encode(token)
                         response = {'status': 'success', 'verification_status': verification_status,
                                     'message': 'OTP Verified', 'token': token}
                     else:
@@ -236,20 +246,50 @@ class OTPVerifyView(views.APIView):
                 print('OTP verify exception = ', str(e))
                 return Response({'status': 'error', 'message': 'Invalid OTP'})
         else:
+            return add_error_response(format_errors(serializer.errors), status=400)
+
+
+class OTPSendView(views.APIView):
+    def post(self, request):
+        serializer = OTPSendSerializer(data=request.data)
+        if serializer.is_valid():
+            # mobile_number = serializer.data.get('mobile_number')
+            return Response({
+                "status": "success",
+                "message": "OTP sent",
+                # "mobile_number": mobile_number
+            })
+        else:
+            return add_error_response(format_errors(serializer.errors), status=400)
+
+
+class OTPVerifyView(views.APIView):
+    def post(self, request):
+        serializer = RegistrationOTPVerfySerializer(data=request.data)
+        if serializer.is_valid():
+            mobile_number = serializer.data.get('mobile_number')
+            otp = serializer.data.get('otp')
+
+            if str(otp) == '123456':
+                return Response({
+                    "status": "success",
+                    "message": "OTP sent",
+                    "mobile_number": mobile_number
+                })
+            else:
+                return Response({
+                    'status': 'error',
+                    'message': 'Invalid OTP'
+                })
+        else:
             return Response(serializer.errors)
 
 
-class UserStatusAppView(CustomAuthenticateAppView):
-    permission_classes = ()
-    authentication_classes = ()
+class UserStatusAppView(views.APIView):
 
-    def get_response(self, request, user):
+    def get(self, request):
         from .utils import get_masked_number
-
-        today = timezone.now()
-        if user.session_expire_date:
-            if user.session_expire_date < today:
-                return add_error_response({'logged_in': False})
+        user = request.customuser
 
         is_subscriber = user.has_subscription()
         data = {
@@ -263,19 +303,11 @@ class UserStatusAppView(CustomAuthenticateAppView):
 
 
 class UserProfileView(views.APIView):
-    authentication_classes = ()
 
     def post(self, request):
-        token = request.data.get('token')
-        from .utils import authenticate_token, get_masked_number
+        user = request.customuser
+        from .utils import get_masked_number
         from videos.utils import get_orders
-
-        try:
-            user = authenticate_token(token)
-            if user is False:
-                raise Exception('Invalid token')
-        except cryptography.fernet.InvalidToken:
-            raise Exception('Invalid token')
 
         is_subscriber = user.has_subscription()
 
@@ -314,5 +346,3 @@ def test_delete_view(request):
 
     except:
         return HttpResponseServerError('Something went wrong!')
-
-

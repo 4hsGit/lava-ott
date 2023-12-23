@@ -1,5 +1,4 @@
 from django.shortcuts import get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
 
 from rest_framework.views import APIView
 from rest_framework import status
@@ -11,13 +10,9 @@ from users.utils import add_success_response, add_error_response, format_errors,
 from users.custom_views import CustomAuthenticateView
 
 
-# @method_decorator(csrf_exempt, name='dispatch')
-class VideoCreateView(CustomAuthenticateView):
-    permission_classes = []
-    authentication_classes = ()
-
-    def get_response(self, request, user):
-        # user = request.user
+class VideoCreateView(APIView):
+    def post(self, request):
+        user = request.customuser
         print('Logged In User --- ', user)
         video_id = request.data.get('id')
         if video_id:
@@ -51,16 +46,14 @@ class VideoCreateView(CustomAuthenticateView):
             })
 
 
-class VideoListView(CustomAuthenticateView):
-    permission_classes = []
-    authentication_classes = ()
+class VideoListView(APIView):
 
-    def get_response(self, request, user):
+    def get(self, request):
         # if not request.user.is_authenticated:
         #     return Response({'status': False, 'logged_in': False})
 
-        page = request.POST.get('page', 1)
-        per_page = request.POST.get('per_page', 10)
+        page = request.GET.get('page', 1)
+        per_page = request.GET.get('per_page', 10)
 
         video_id = request.data.get('id')
         if not video_id:
@@ -81,7 +74,7 @@ class VideoListView(CustomAuthenticateView):
             return add_success_response({'data': serializer.data})
 
 
-class VideoDeleteView(CustomAuthenticateView):
+class VideoDeleteView(APIView):
     def post(self, request):
         video_id = request.data.get('id')
         video = get_object_or_404(Video, id=video_id)

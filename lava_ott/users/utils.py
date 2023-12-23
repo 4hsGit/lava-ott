@@ -3,6 +3,7 @@ from cryptography.fernet import Fernet
 from rest_framework.response import Response
 from django.utils import timezone
 import jwt
+from json import loads
 
 
 def jwt_encode(token):
@@ -19,7 +20,7 @@ def jwt_decode(token):
 
 
 def format_errors(err):
-    return {i: j[0] for i, j in err.items()}
+    return {i: j[0].replace('\\"', '') for i, j in err.items()}
 
 
 def add_success_response(data, status=200):
@@ -146,3 +147,8 @@ def get_masked_number(user):
         mobile_number = str(mobile_number)[0] + '***' + str(mobile_number)[-3:]
         return mobile_number
     return ''
+
+
+def str_to_json(data):
+    data = data.replace("'", '"')
+    return loads(data)
