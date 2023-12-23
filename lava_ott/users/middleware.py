@@ -6,7 +6,15 @@ from django.http import JsonResponse
 class CustomMiddleWare:
     def __init__(self, get_response):
         self.get_response = get_response
-        self.excluded_paths = ('/api/users/login/', '/admin/')
+        self.excluded_paths = ('/api/users/login/',
+                               '/admin/',
+                               '/api/users/app/registration/',
+                               '/api/users/app/otp-send/',
+                               '/api/users/app/otp-verify/',
+                               '/api/users/app/login-otp-send/',
+                               '/api/users/app/login-otp-verify/',
+                               '/api/videos/app-change-order-period/'
+                               )
 
     def __call__(self, request, *args, **kwargs):
         url_path = request.path
