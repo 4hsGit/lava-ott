@@ -1,6 +1,7 @@
 # ----------------- API for Mobile App ---------------------- #
 
 from rest_framework.response import Response
+from rest_framework.views import APIView
 from django.utils import timezone
 from ..models import Video, Order
 from ..serializers import (
@@ -13,11 +14,12 @@ from users.utils import get_paginated_list, format_errors, add_error_response, a
 from users.custom_views import CustomAuthenticateAppView
 
 
-class VideoListAppView(CustomAuthenticateAppView):
-    def get_response(self, request, user):
-        post = request.data.get
-        page = post('page', 1)
-        per_page = post('per_page', 10)
+class VideoListAppView(APIView):
+    def get(self, request):
+        # user = request.customuser
+        get = request.GET.get
+        page = get('page', 1)
+        per_page = get('per_page', 10)
 
         videos = Video.objects.filter(view_on_app=True)
         data = get_paginated_list(videos, page, per_page)
@@ -27,8 +29,9 @@ class VideoListAppView(CustomAuthenticateAppView):
         return Response({'status': True, 'data': data})
 
 
-class OrderCreateView(CustomAuthenticateAppView):
-    def get_response(self, request, user):
+class OrderCreateView(APIView):
+    def post(self, request):
+        user = request.customuser
         serializer = OrderCreateSerializer(data=request.data)
 
         if user.has_subscription() is True:
@@ -37,23 +40,25 @@ class OrderCreateView(CustomAuthenticateAppView):
         if serializer.is_valid():
             obj = serializer.save(user=user)
             print(obj)
-            return Response({'status': True, 'message': 'Order created', 'data': get_order(obj)})
+            return Response({'status': 'success', 'message': 'Order created', 'data': get_order(obj)})
         else:
-            return Response({'status': False, 'error': format_errors(serializer.errors)})
+            return Response({'status': 'error', 'error': format_errors(serializer.errors)})
 
 
-class OrderListView(CustomAuthenticateAppView):
-    def get_response(self, request, user):
+class OrderListView(APIView):
+    def get(self, request):
+        user = request.customuser
         from ..utils import get_orders
         # serializer = OrderListSerializer(orders, many=True)
-        return Response({'status': True, 'data': get_orders(user)})
+        return Response({'status': 'success', 'data': get_orders(user)})
 
 
-class CheckSubscriptionView(CustomAuthenticateAppView):
-    def get_response(self, request, user):
+class CheckSubscriptionView(APIView):
+    def get(self, request):
+        user = request.customuser
         is_subscribed = user.has_subscription()
         data = {
-            'status': True,
+            'status': 'success',
             'is_subscribed': is_subscribed
         }
         if is_subscribed is True:
@@ -63,10 +68,12 @@ class CheckSubscriptionView(CustomAuthenticateAppView):
         return Response(data)
 
 
-class SubscriptionView(CustomAuthenticateAppView):
+class SubscriptionView(APIView):
 
-    def get_response(self, request, user):
+    def post(self, request):
         from ..utils import get_expiry_date
+
+        user = request.customuser
         order_id = request.data.get('id')
         subscription_amount = request.data.get('subscription_amount')
         subscription_period = request.data.get('subscription_period')
@@ -98,12 +105,13 @@ class SubscriptionView(CustomAuthenticateAppView):
             return add_error_response({'message': f'Error - {str(e)}'})
 
 
-class VideoPlayView(CustomAuthenticateAppView):
-    def get_response(self, request, user):
+class VideoPlayView(APIView):
+    def post(self, request):
+        user = request.customuser
         video_id = request.data.get('video')
 
         is_subscribed = user.has_subscription()
-        if user.has_subscription() is True:
+        if is_subscribed is True:
             from ..utils import get_videos
             try:
                 from django.db.models import F
@@ -127,3 +135,22 @@ class VideoPlayView(CustomAuthenticateAppView):
                 'status': True,
                 'is_subscribed': is_subscribed
             })
+
+
+class ChangeSubscriptionPeriod(APIView):
+    def get(self, request):
+        from datetime import datetime
+        order_id = request.GET.get('order_id')
+        from_date = request.GET.get('from')
+        to_date = request.GET.get('to')
+        try:
+            order = Order.objects.get(id=order_id)
+            if from_date:
+                start_date = datetime.strptime(from_date, '%Y-%m-%d').strftime('%Y-%m-%d') + ' 00:00:00'
+                order.start_date = start_date
+            if to_date:
+                expiration_date = datetime.strptime(to_date, '%Y-%m-%d').strftime('%Y-%m-%d %H:%M:S') + ' 00:00:00'
+                order.expiration_date = expiration_date
+            order.save()
+        except Order.DoesNotExist:
+            return Response({'status': 'error', 'message': 'Order does not exist'})

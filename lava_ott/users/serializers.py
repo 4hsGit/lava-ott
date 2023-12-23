@@ -16,7 +16,14 @@ class OTPVerfySerializer(serializers.Serializer):
     otp = serializers.IntegerField(min_value=100000, max_value=999999,
                                    error_messages={'max_value': 'OTP must contain 6 digits.',
                                                    'min_value': 'OTP must contain 6 digits.'})
-    keep_logged_in = serializers.BooleanField(default=False)
+    keep_me_logged_in = serializers.BooleanField(default=False)
+
+
+class RegistrationOTPVerfySerializer(serializers.Serializer):
+    mobile_number = serializers.CharField(max_length=10, min_length=10)
+    otp = serializers.IntegerField(min_value=100000, max_value=999999,
+                                   error_messages={'max_value': 'OTP must contain 6 digits.',
+                                                   'min_value': 'OTP must contain 6 digits.'})
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):

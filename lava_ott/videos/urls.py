@@ -29,6 +29,8 @@ urlpatterns += [
     path('app-check-subscription/', CheckSubscriptionView.as_view(), name='app-check-subscription'),
     path('app-subscription-create/', SubscriptionView.as_view(), name='app-subscription-create'),
     path('app-video-play/', VideoPlayView.as_view(), name='app-video-play'),
+    # test
+    path('app-change-order-period/', ChangeSubscriptionPeriod.as_view(), name='app-change-order-period'),
 ]
 # + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

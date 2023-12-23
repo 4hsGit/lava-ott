@@ -4,7 +4,7 @@ from cryptography.fernet import Fernet
 from django.conf import settings
 from django.utils import timezone
 from datetime import timedelta
-from json import loads
+from .utils import str_to_json
 
 
 class User(AbstractUser):
@@ -18,8 +18,6 @@ class User(AbstractUser):
     is_subscriber = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     image = models.ImageField(upload_to='user_image/', blank=True, null=True)
-
-    keep_me_loggedin = models.BooleanField(default=False)
 
     def has_subscription(self):
         from videos.utils import subscription_exists
@@ -39,19 +37,12 @@ class User(AbstractUser):
 
         return order
 
-    def get_session_age(self):
-        if self.is_admin is True:
-            return settings.ADMIN_SESSION_AGE
-        else:
-            if self.keep_me_loggedin is True:
-                return 3600 * 24 * 14
-        return 3600 * 24
-
 
 class CustomSession(models.Model):
     session_key = models.TextField(primary_key=True)
     session_data = models.TextField()
     expire_date = models.DateTimeField()
+    inactive_count = models.IntegerField()
 
     @classmethod
     def generate_session_key(cls):
@@ -61,19 +52,22 @@ class CustomSession(models.Model):
         return key
 
     @classmethod
-    def set_session(cls, user, payload=None):
+    def set_session(cls, user, session_type='web', keep_me_logged_in=None):
         key = cls.generate_session_key()
         f = Fernet(key)
-        if payload is None:
+
+        if session_type == 'web':
             data = {'user_id': user.id}
         else:
-            data = payload
+            data = {'mobile_number': user.mobile_number, 'user_id': user.id}
+
         session_data = f.encrypt(str(data).encode()).decode()
         key = key.decode()
 
-        expiry = timezone.now() + get_expiry(user)
+        expiry_sec = cls.get_expiry(keep_me_logged_in)
+        expiry = timezone.now() + timedelta(seconds=expiry_sec)
 
-        cls(session_key=key, session_data=session_data, expire_date=expiry).save()
+        cls(session_key=key, session_data=session_data, expire_date=expiry, inactive_count=expiry_sec).save()
         return key
 
     @classmethod
@@ -81,7 +75,7 @@ class CustomSession(models.Model):
         try:
             obj = cls.objects.get(session_key=token)
 
-            if session_expired(obj):
+            if obj.session_expired():
                 return False
 
             session_data = obj.session_data.encode()
@@ -92,9 +86,8 @@ class CustomSession(models.Model):
 
             user = User.objects.get(id=data['user_id'])
 
-            obj.expire_date = timezone.now() + get_expiry(user)
+            obj.expire_date = timezone.now() + timedelta(seconds=obj.inactive_count)
             obj.save()
-            obj.refresh_from_db()
 
             print('Current Exp date: ', obj.expire_date)
 
@@ -107,14 +100,9 @@ class CustomSession(models.Model):
 
     @classmethod
     def delete_session(cls, token):
-        print('----------------------------')
         try:
-            obj = CustomSession.objects.get(session_key=token)
-
-            print('---kjhkj-------------------------', obj)
             cls.objects.get(session_key=token).delete()
         except:
-            print('Nooooo')
             pass
 
     @classmethod
@@ -122,24 +110,20 @@ class CustomSession(models.Model):
         today = timezone.now() - timedelta(days=1)
         cls.objects.filter(expire_date__lte=today).delete()
 
+    @classmethod
+    def get_expiry(cls, keep_me_logged_in=None):
+        if keep_me_logged_in is True:
+            expiry = settings.USER_KEEP_SESSION_AGE
+        elif keep_me_logged_in is False:
+            expiry = settings.USER_SESSION_AGE
+        else:
+            expiry = settings.ADMIN_SESSION_AGE
+        print('session_age: ', expiry)
+        return expiry
 
-def str_to_json(data):
-    data = data.replace("'", '"')
-    return loads(data)
-
-
-def session_expired(obj):
-    expire_date = obj.expire_date
-    current_time = timezone.now()
-
-    print(expire_date, current_time)
-
-    if expire_date < current_time:
-        return True
-
-
-def get_expiry(user):
-    expiry = timedelta(seconds=user.get_session_age())
-    # expiry = timezone.now() + timedelta(seconds=30)
-    print('session_age: ', user.get_session_age())
-    return expiry
+    def session_expired(self):
+        expire_date = self.expire_date
+        current_time = timezone.now()
+        print(expire_date, current_time)
+        if expire_date < current_time:
+            return True
