@@ -152,8 +152,10 @@ REST_FRAMEWORK = {
 
 CSRF_FAILURE_VIEW = 'users.error_handler_views.error_403_view'
 
-SESSION_COOKIE_AGE = 10
-SESSION_SAVE_EVERY_REQUEST = True
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# SESSION_COOKIE_AGE = 10
+# SESSION_SAVE_EVERY_REQUEST = True
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-ADMIN_SESSION_AGE = 100  # In seconds
+ADMIN_SESSION_AGE = 60  # In seconds
+USER_KEEP_SESSION_AGE = 60  # In seconds
+USER_SESSION_AGE = 60  # In seconds
