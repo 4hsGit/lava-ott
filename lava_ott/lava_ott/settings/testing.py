@@ -1,6 +1,6 @@
 from .base import *
 
-ALLOWED_HOSTS = ['bibinab.pythonanywhere.com']
+ALLOWED_HOSTS = ['*']
 
 import django_heroku
 import dj_database_url
