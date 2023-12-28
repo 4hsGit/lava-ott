@@ -24,10 +24,10 @@ SECRET_KEY = 'django-insecure-42zoh+(%^q^)$kypaa6ub83satxd_do!3x=it2kk4f#42m#hzl
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-import django_heroku
-import dj_database_url
+# import django_heroku
+# import dj_database_url
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
 
 ALLOWED_HOSTS = ['lavaott-1-be4120441dfc.herokuapp.com']
 
