@@ -1,6 +1,8 @@
 from .base import *
 
-ALLOWED_HOSTS = ['lavaott-test-f146afb30529.herokuapp.com']
+DEBUG = False
+
+ALLOWED_HOSTS = ['lavaott-1-be4120441dfc.herokuapp.com']
 
 import django_heroku
 import dj_database_url
