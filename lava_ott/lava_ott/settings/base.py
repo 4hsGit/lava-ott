@@ -168,3 +168,5 @@ CSRF_FAILURE_VIEW = 'users.error_handler_views.error_403_view'
 ADMIN_SESSION_AGE = 60  # In seconds
 USER_KEEP_SESSION_AGE = 60  # In seconds
 USER_SESSION_AGE = 60  # In seconds
+
+DISABLE_COLLECTSTATIC = 1
