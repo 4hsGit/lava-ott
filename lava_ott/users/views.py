@@ -14,7 +14,6 @@ from .serializers import (
     OTPVerfySerializer,
     RegistrationOTPVerfySerializer,
 )
-from twilio.rest import Client
 
 from .custom_views import CustomAuthenticateAppView, CustomAuthenticateView
 from .models import CustomSession
