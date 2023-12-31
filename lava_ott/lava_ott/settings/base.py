@@ -29,7 +29,7 @@ DEBUG = False
 
 # django_heroku.settings(locals())
 
-ALLOWED_HOSTS = ['lavaott-1-be4120441dfc.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
