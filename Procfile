@@ -1,1 +1,1 @@
-web: gunicorn lava_ott.lava_ott.wsgi
+web: gunicorn lava_ott.wsgi
