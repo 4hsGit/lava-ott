@@ -24,16 +24,16 @@ class VideoCreateView(APIView):
             obj = serializer.save(view_on_app=True, created_by=user)
 
             # Set duration
-            from moviepy.video.io.VideoFileClip import VideoFileClip
-            from django.conf import settings
-            import os
-            file_path = os.path.join(settings.MEDIA_ROOT, obj.file.name)
-            clip = VideoFileClip(file_path)
-            d = clip.duration
-            print('duration  = ', d)
-            clip.close()
+            # from moviepy.video.io.VideoFileClip import VideoFileClip
+            # from django.conf import settings
+            # import os
+            # file_path = os.path.join(settings.MEDIA_ROOT, obj.file.name)
+            # clip = VideoFileClip(file_path)
+            # d = clip.duration
+            # print('duration  = ', d)
+            # clip.close()
 
-            obj.duration = d
+            # obj.duration = d
             obj.save()
 
             return add_success_response({
