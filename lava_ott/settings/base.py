@@ -135,7 +135,7 @@ STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_FILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'lavaott_media')
+MEDIA_ROOT = os.path.join(STATIC_ROOT, 'lavaott_media')
 MEDIA_URL = 'lavaott_media/'
 
 # Default primary key field type

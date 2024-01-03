@@ -11,7 +11,6 @@ from rest_framework.decorators import authentication_classes, permission_classes
 
 @api_view(['POST'])
 def carousel_create(request):
-    print(request.user)
     serializer = CarouselSerializer(data=request.data)
     if serializer.is_valid():
         images = serializer.validated_data.get('image')
