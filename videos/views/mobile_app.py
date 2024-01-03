@@ -11,7 +11,6 @@ from ..serializers import (
 )
 from ..utils import get_order
 from users.utils import get_paginated_list, format_errors, add_error_response, add_success_response
-from users.custom_views import CustomAuthenticateAppView
 
 
 class VideoListAppView(APIView):

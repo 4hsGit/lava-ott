@@ -7,7 +7,6 @@ from rest_framework.permissions import IsAuthenticated
 from ..serializers import VideoCreateSerializer, VideoListSerializer
 from ..models import Video
 from users.utils import add_success_response, add_error_response, format_errors, get_paginated_list
-from users.custom_views import CustomAuthenticateView
 
 
 class VideoCreateView(APIView):

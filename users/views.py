@@ -15,7 +15,6 @@ from .serializers import (
     RegistrationOTPVerfySerializer,
 )
 
-from .custom_views import CustomAuthenticateAppView, CustomAuthenticateView
 from .models import CustomSession
 
 
