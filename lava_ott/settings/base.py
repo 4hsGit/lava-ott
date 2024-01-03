@@ -171,4 +171,4 @@ ADMIN_SESSION_AGE = 200  # In seconds
 USER_KEEP_SESSION_AGE = 200  # In seconds
 USER_SESSION_AGE = 200  # In seconds
 
-# CORS_ALLOWED_ORIGINS = ['https://lavaott-979ac37aaaa6.herokuapp.com']
+CORS_ALLOWED_ORIGINS = ['https://lavaott-979ac37aaaa6.herokuapp.com']
