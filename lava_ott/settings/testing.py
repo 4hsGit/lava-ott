@@ -1,8 +1,8 @@
 from .base import *
 
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 import django_heroku
 

@@ -29,7 +29,7 @@ DEBUG = False
 
 # django_heroku.settings(locals())
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = []
 
 # Application definition
 
