@@ -133,7 +133,7 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_FILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+# STATIC_FILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
@@ -170,3 +170,5 @@ CSRF_FAILURE_VIEW = 'users.error_handler_views.error_403_view'
 ADMIN_SESSION_AGE = 200  # In seconds
 USER_KEEP_SESSION_AGE = 200  # In seconds
 USER_SESSION_AGE = 200  # In seconds
+
+CORS_ALLOWED_ORIGINS = ['https://lavaott-979ac37aaaa6.herokuapp.com']
