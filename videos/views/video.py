@@ -48,9 +48,6 @@ class VideoCreateView(APIView):
 class VideoListView(APIView):
 
     def get(self, request):
-        # if not request.user.is_authenticated:
-        #     return Response({'status': False, 'logged_in': False})
-
         page = request.GET.get('page', 1)
         per_page = request.GET.get('per_page', 10)
 
@@ -59,14 +56,9 @@ class VideoListView(APIView):
             videos = Video.objects.all()
             data = get_paginated_list(videos, page, per_page)
             serializer = VideoListSerializer(data['data'], many=True)
-            # return Response({'status': True, 'data': serializer.data})
             data['data'] = serializer.data
             print('data ---- ', data)
             return add_success_response(data)
-            # return Response(data)
-
-            # if not request.user.is_authenticated:
-            #     return Response({'status': False, 'logged_in': False})
         else:
             video = get_object_or_404(Video, id=video_id)
             serializer = VideoListSerializer(video)
