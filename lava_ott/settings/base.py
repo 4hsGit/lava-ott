@@ -134,7 +134,7 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATIC_FILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'lavaott_media')
@@ -167,8 +167,8 @@ CSRF_FAILURE_VIEW = 'users.error_handler_views.error_403_view'
 # SESSION_SAVE_EVERY_REQUEST = True
 # SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
-ADMIN_SESSION_AGE = 200  # In seconds
-USER_KEEP_SESSION_AGE = 200  # In seconds
-USER_SESSION_AGE = 200  # In seconds
+ADMIN_SESSION_AGE = 300  # In seconds
+USER_KEEP_SESSION_AGE = 300  # In seconds
+USER_SESSION_AGE = 300  # In seconds
 
 # CORS_ALLOWED_ORIGINS = ['https://lavaott-979ac37aaaa6.herokuapp.com']
