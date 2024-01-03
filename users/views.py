@@ -79,22 +79,23 @@ class StatusView(views.APIView):
         print('customuser: ', user)
         print('customtoken: ', customtoken)
         print('is_authenticated: ', is_authenticated)
-        data = {
-            'id': user.id,
-            'username': user.username,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'is_admin': user.is_admin,
-            # 'user': str(request.user),
-        }
-        response['logged_in'] = True
-        response['data'] = data
-        return add_success_response(response)
-        # else:
-        #     return add_error_response({
-        #         'logged_in': False,
-        #         'message': 'User is not logged in.'
-        #     })
+        if request.is_authenticated is True:
+            data = {
+                'id': user.id,
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'is_admin': user.is_admin,
+                # 'user': str(request.user),
+            }
+            response['logged_in'] = True
+            response['data'] = data
+            return add_success_response(response)
+        else:
+            return add_error_response({
+                'logged_in': False,
+                'message': 'User is not logged in.'
+            })
 
 
 class UserRegistrationView(views.APIView):
