@@ -13,7 +13,8 @@ class CustomMiddleWare:
                                '/api/users/app/otp-verify/',
                                '/api/users/app/login-otp-send/',
                                '/api/users/app/login-otp-verify/',
-                               '/api/videos/app-change-order-period/'
+                               '/api/videos/app-change-order-period/',
+                               '/lavaott_media/',
                                )
 
     def __call__(self, request, *args, **kwargs):
