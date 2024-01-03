@@ -17,27 +17,29 @@ class VideoCreateView(APIView):
         if video_id:
             video = get_object_or_404(Video, id=video_id)
             serializer = VideoCreateSerializer(video, data=request.data)
+            msg = 'Video updated successfully'
         else:
             serializer = VideoCreateSerializer(data=request.data)
+            msg = 'Video created successfully'
 
         if serializer.is_valid():
             obj = serializer.save(view_on_app=True, created_by=user)
 
             # Set duration
-            # from moviepy.video.io.VideoFileClip import VideoFileClip
-            # from django.conf import settings
-            # import os
-            # file_path = os.path.join(settings.MEDIA_ROOT, obj.file.name)
-            # clip = VideoFileClip(file_path)
-            # d = clip.duration
-            # print('duration  = ', d)
-            # clip.close()
+            from moviepy.video.io.VideoFileClip import VideoFileClip
+            from django.conf import settings
+            import os
+            file_path = os.path.join(settings.MEDIA_ROOT, obj.file.name)
+            clip = VideoFileClip(file_path)
+            d = clip.duration
+            print('duration  = ', d)
+            clip.close()
 
-            # obj.duration = d
+            obj.duration = d
             obj.save()
 
             return add_success_response({
-                'message': 'Video created successfully'
+                'message': msg
             }, status=status.HTTP_201_CREATED)
         else:
             return add_error_response({
