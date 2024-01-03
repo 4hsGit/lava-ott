@@ -64,7 +64,7 @@ def subscription_exists(user):
     return False
 
 
-def get_videos(video):
+def get_video(video):
     return {
         "id": video.id,
         "name": video.name,

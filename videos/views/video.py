@@ -50,21 +50,22 @@ class VideoCreateView(APIView):
 class VideoListView(APIView):
 
     def get(self, request):
+        from ..utils import get_video
         page = request.GET.get('page', 1)
         per_page = request.GET.get('per_page', 10)
 
-        video_id = request.data.get('id')
+        video_id = request.GET.get('id')
         if not video_id:
             videos = Video.objects.all()
             data = get_paginated_list(videos, page, per_page)
-            serializer = VideoListSerializer(data['data'], many=True)
-            data['data'] = serializer.data
-            print('data ---- ', data)
+            # serializer = VideoListSerializer(data['data'], many=True)
+            data['data'] = [get_video(i) for i in data['data']]
+            # print('data ---- ', data)
             return add_success_response(data)
         else:
             video = get_object_or_404(Video, id=video_id)
-            serializer = VideoListSerializer(video)
-            return add_success_response({'data': serializer.data})
+            # serializer = VideoListSerializer(video)
+            return add_success_response({'data': get_video(video)})
 
 
 class VideoDeleteView(APIView):

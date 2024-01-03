@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent.parent
 SECRET_KEY = 'django-insecure-42zoh+(%^q^)$kypaa6ub83satxd_do!3x=it2kk4f#42m#hzl'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 # import django_heroku
 # import dj_database_url
