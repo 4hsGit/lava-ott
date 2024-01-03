@@ -33,7 +33,9 @@ class AdminLoginView(views.APIView):
         password = data.get('password', None)
 
         if username is None or password is None:
-            return Response({'error': 'Both username and password are required.'}, status=status.HTTP_400_BAD_REQUEST)
+            return add_error_response({
+                'error': 'Both username and password are required.'
+            }, status=status.HTTP_400_BAD_REQUEST)
 
         user = authenticate(request, username=username, password=password)
 
@@ -48,11 +50,13 @@ class AdminLoginView(views.APIView):
                     'token': token
                 }, status=status.HTTP_200_OK)
             else:
-                return Response({'status': False,
-                                 'message': 'User account is not active.'}, status=status.HTTP_401_UNAUTHORIZED)
+                return add_error_response({
+                    'message': 'User account is not active.'
+                }, status=status.HTTP_401_UNAUTHORIZED)
         else:
-            return Response({'status': False, 'message': 'Invalid username or password.'},
-                            status=status.HTTP_401_UNAUTHORIZED)
+            return add_error_response({
+                'message': 'Invalid username or password.'
+            }, status=status.HTTP_401_UNAUTHORIZED)
 
 
 class AdminLogoutView(views.APIView):
