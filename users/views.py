@@ -1,3 +1,5 @@
+import datetime
+
 import cryptography.fernet
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework import status, views
@@ -115,6 +117,11 @@ class UserRegistrationView(views.APIView):
 
             mob_no = req_data.get('mobile_number')
             otp = req_data.get('otp')
+            dob = req_data.get('dob')
+
+            if dob >= datetime.datetime.now().date():
+                return add_error_response({'message': 'Invalid dob'})
+
             from .otp import valdiate_otp
             if valdiate_otp(mob_no, otp) is False:
                 return add_error_response({'error': 'Invalid OTP'})
