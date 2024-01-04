@@ -316,7 +316,7 @@ class UserStatusAppView(views.APIView):
 
 class UserProfileView(views.APIView):
 
-    def post(self, request):
+    def get(self, request):
         user = request.customuser
         from .utils import get_masked_number
         from videos.utils import get_orders
