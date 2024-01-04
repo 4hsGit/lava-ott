@@ -27,6 +27,7 @@ class RegistrationOTPVerfySerializer(serializers.Serializer):
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    first_name = serializers.CharField()
     mobile_number = serializers.IntegerField(min_value=100000000, max_value=9999999999)
     otp = serializers.IntegerField(min_value=100000, max_value=999999,
                                    error_messages={'max_value': 'OTP must contain 6 digits.',
