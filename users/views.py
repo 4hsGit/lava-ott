@@ -103,11 +103,12 @@ class UserRegistrationView(views.APIView):
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
 
-        try:
-            get_user_model().objects.get(username=request.data.get('mobile_number'))
+        mob_no = request.data.get('mobile_number')
+        from django.db.models import Q
+        user_exists = get_user_model().objects.filter(
+            Q(username=mob_no) | Q(mobile_number=mob_no))
+        if user_exists:
             return add_error_response({'message': 'Mobile number registered already.'})
-        except get_user_model().DoesNotExist:
-            pass
 
         if serializer.is_valid():
             req_data = serializer.validated_data
