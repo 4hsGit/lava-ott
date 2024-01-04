@@ -238,10 +238,11 @@ class AppLoginView(views.APIView):
                 # print(verification_status)
                 verification_status = 'approved'
 
-                if verification_status == 'approved' and str(otp) == '123456':
+                user = authenticate(request, mobile_number=mobile_number)
+                if user is not None:
 
-                    user = authenticate(request, mobile_number=mobile_number)
-                    if user is not None:
+                    if verification_status == 'approved' and str(otp) == '123456':
+
                         CustomSession.delete_expired_sessions()
 
                         token = CustomSession.set_session(user, session_type='app', keep_me_logged_in=keep_me_logged_in)
@@ -249,9 +250,11 @@ class AppLoginView(views.APIView):
                         response = {'status': 'success', 'verification_status': verification_status,
                                     'message': 'OTP Verified', 'token': token}
                     else:
-                        response = {'status': 'error', 'message': 'Invalid mobile number'}
+                        response = {'status': 'error', 'verification_status': verification_status,
+                                    'message': 'Invalid OTP'}
                 else:
-                    response = {'status': 'error', 'verification_status': verification_status, 'message': 'Invalid OTP'}
+                    response = {'status': 'error', 'message': 'Invalid mobile number'}
+
                 return Response(response)
             except Exception as e:
                 print('OTP verify exception = ', str(e))
