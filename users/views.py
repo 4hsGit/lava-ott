@@ -173,7 +173,7 @@ class AppLoginOTPSendView(views.APIView):
             mobile_number = request.data.get('mobile_number')
             user = authenticate(request, mobile_number=mobile_number)
             if user is None:
-                return add_success_response({'message': 'Mobile number is not registered.'})
+                return add_error_response({'message': 'Mobile number is not registered.'})
 
             account_sid = "AC9b697e7816c22010ceede5954b66f002"
             auth_token = "78ac2d5732cd5efcfb3f8807d2f0aeae"
@@ -182,7 +182,7 @@ class AppLoginOTPSendView(views.APIView):
             # verified_number = "+918078749212"
             verified_number = '+91' + mobile_number
 
-            client = Client(account_sid, auth_token)
+            # client = Client(account_sid, auth_token)
 
             try:
                 # verification = client.verify.v2.services(verify_sid) \
