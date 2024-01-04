@@ -274,18 +274,16 @@ class OTPVerifyView(views.APIView):
             otp = serializer.data.get('otp')
 
             if str(otp) == '123456':
-                return Response({
-                    "status": "success",
-                    "message": "OTP sent",
+                return add_success_response({
+                    "message": "OTP verified",
                     "mobile_number": mobile_number
                 })
             else:
-                return Response({
-                    'status': 'error',
+                return add_error_response({
                     'message': 'Invalid OTP'
                 })
         else:
-            return Response(serializer.errors)
+            return add_error_response(serializer.errors)
 
 
 class UserStatusAppView(views.APIView):
