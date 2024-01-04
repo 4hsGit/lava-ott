@@ -119,7 +119,7 @@ class UserRegistrationView(views.APIView):
             otp = req_data.get('otp')
             dob = req_data.get('dob')
 
-            if dob >= datetime.datetime.now().date():
+            if dob and dob >= datetime.datetime.now().date():
                 return add_error_response({'message': 'Invalid dob'})
 
             from .otp import valdiate_otp
