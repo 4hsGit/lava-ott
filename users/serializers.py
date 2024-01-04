@@ -8,11 +8,11 @@ class LoginSerializer(serializers.Serializer):
 
 
 class OTPSendSerializer(serializers.Serializer):
-    mobile_number = serializers.IntegerField(min_value=100000000, max_value=9999999999)
+    mobile_number = serializers.IntegerField(min_value=1000000000, max_value=9999999999)
 
 
 class OTPVerfySerializer(serializers.Serializer):
-    mobile_number = serializers.IntegerField(min_value=100000000, max_value=9999999999)
+    mobile_number = serializers.IntegerField(min_value=1000000000, max_value=9999999999)
     otp = serializers.IntegerField(min_value=100000, max_value=999999,
                                    error_messages={'max_value': 'OTP must contain 6 digits.',
                                                    'min_value': 'OTP must contain 6 digits.'})
@@ -20,7 +20,7 @@ class OTPVerfySerializer(serializers.Serializer):
 
 
 class RegistrationOTPVerfySerializer(serializers.Serializer):
-    mobile_number = serializers.IntegerField(min_value=100000000, max_value=9999999999)
+    mobile_number = serializers.IntegerField(min_value=1000000000, max_value=9999999999)
     otp = serializers.IntegerField(min_value=100000, max_value=999999,
                                    error_messages={'max_value': 'OTP must contain 6 digits.',
                                                    'min_value': 'OTP must contain 6 digits.'})
