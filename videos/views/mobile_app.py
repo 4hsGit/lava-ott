@@ -74,8 +74,8 @@ class SubscriptionView(APIView):
 
         user = request.customuser
         order_id = request.data.get('id')
-        subscription_amount = request.data.get('subscription_amount')
-        subscription_period = request.data.get('subscription_period')
+        # subscription_amount = request.data.get('subscription_amount')
+        # subscription_period = request.data.get('subscription_period')
 
         is_subscribed = user.has_subscription()
         new_start_date = timezone.now()
@@ -91,6 +91,10 @@ class SubscriptionView(APIView):
             return add_error_response({'message': 'Subscription already exist.'})
         try:
             order = Order.objects.get(id=order_id)
+
+            if order.is_active is True or order.status == 'completed':
+                return add_error_response("message", "Already completed order.")
+
             order.status = 'completed'
             order.is_active = True
             order.start_date = new_start_date
