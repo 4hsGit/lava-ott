@@ -157,6 +157,8 @@ class ChangeSubscriptionPeriod(APIView):
                 # expiration_date = datetime.strptime(to_date, '%Y-%m-%d').strftime('%Y-%m-%d %H:%M:S') + ' 00:00:00'
                 expiration_date = datetime.strptime(to_date, '%Y-%m-%d')
                 order.expiration_date = expiration_date
+                if expiration_date < datetime.now():
+                    order.is_active = False
             order.save()
         except Order.DoesNotExist:
             return Response({'status': 'error', 'message': 'Order does not exist'})

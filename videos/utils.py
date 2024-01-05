@@ -61,6 +61,9 @@ def subscription_exists(user):
         curr_order.save()
         orders.exclude(id=curr_order.id).update(is_active=False)
         return True
+
+    if orders.exists():
+        orders.update(is_active=False)
     return False
 
 
