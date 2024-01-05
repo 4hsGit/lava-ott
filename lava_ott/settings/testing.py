@@ -4,6 +4,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['lavaott-979ac37aaaa6.herokuapp.com']
 
+CORS_ALLOWED_ORIGINS = ['*']
+
 import django_heroku
 
 django_heroku.settings(locals())
