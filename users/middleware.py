@@ -1,6 +1,7 @@
 from users.utils import jwt_decode
 from users.models import CustomSession
 from django.http import JsonResponse
+from django.urls import resolve
 
 
 class CustomMiddleWare:
@@ -20,7 +21,6 @@ class CustomMiddleWare:
     def __call__(self, request, *args, **kwargs):
 
         # To raise not found exception
-        from django.urls import resolve
         url_path = request.path
         resolve(url_path)
         # --------------------------- #
