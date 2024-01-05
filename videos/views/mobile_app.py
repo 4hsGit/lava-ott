@@ -160,5 +160,6 @@ class ChangeSubscriptionPeriod(APIView):
                 if expiration_date < datetime.now():
                     order.is_active = False
             order.save()
+            return add_success_response({'message': 'Subscription Expiry changed.'})
         except Order.DoesNotExist:
             return Response({'status': 'error', 'message': 'Order does not exist'})
