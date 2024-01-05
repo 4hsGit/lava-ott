@@ -43,11 +43,11 @@ def get_orders(user):
 
 def subscription_exists(user):
     from .models import Order
-    from django.db.models import F
 
     orders = Order.objects.filter(user=user, status='completed')
-    current_orders = orders.filter(start_date__lte=timezone.now(), expiration_date__gt=F('start_date'))
-    later_orders = orders.filter(start_date__gte=timezone.now(), expiration_date__gt=F('start_date'))
+    now_date = timezone.now()
+    current_orders = orders.filter(start_date__lte=now_date, expiration_date__gt=now_date)
+    later_orders = orders.filter(start_date__gte=now_date, expiration_date__gt=now_date)
 
     curr_order = None
     if current_orders.exists():
