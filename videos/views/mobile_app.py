@@ -92,6 +92,9 @@ class SubscriptionView(APIView):
         try:
             order = Order.objects.get(id=order_id)
 
+            if order.user != user:
+                return add_error_response({"message", "Order is not created by the user."}, status=401)
+
             if order.is_active is True or order.status == 'completed':
                 return add_error_response({"message", "Already completed order."})
 
@@ -147,10 +150,12 @@ class ChangeSubscriptionPeriod(APIView):
         try:
             order = Order.objects.get(id=order_id)
             if from_date:
-                start_date = datetime.strptime(from_date, '%Y-%m-%d').strftime('%Y-%m-%d') + ' 00:00:00'
+                # start_date = datetime.strptime(from_date, '%Y-%m-%d').strftime('%Y-%m-%d') + ' 00:00:00'
+                start_date = datetime.strptime(from_date, '%Y-%m-%d')
                 order.start_date = start_date
             if to_date:
-                expiration_date = datetime.strptime(to_date, '%Y-%m-%d').strftime('%Y-%m-%d %H:%M:S') + ' 00:00:00'
+                # expiration_date = datetime.strptime(to_date, '%Y-%m-%d').strftime('%Y-%m-%d %H:%M:S') + ' 00:00:00'
+                expiration_date = datetime.strptime(to_date, '%Y-%m-%d')
                 order.expiration_date = expiration_date
             order.save()
         except Order.DoesNotExist:
