@@ -47,6 +47,7 @@ class OrderCreateView(APIView):
 class OrderListView(APIView):
     def get(self, request):
         user = request.customuser
+        user.has_subscription()
         from ..utils import get_orders
         # serializer = OrderListSerializer(orders, many=True)
         return Response({'status': 'success', 'data': get_orders(user)})
@@ -96,7 +97,7 @@ class SubscriptionView(APIView):
                 return add_error_response({"message": "Order is not created by the user."}, status=401)
 
             if order.is_active is True or order.status == 'completed':
-                return add_error_response({"message", "Already completed order."})
+                return add_error_response({"message": "Already completed order."})
 
             order.status = 'completed'
             order.is_active = True
