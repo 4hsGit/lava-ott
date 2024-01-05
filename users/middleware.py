@@ -18,7 +18,13 @@ class CustomMiddleWare:
                                )
 
     def __call__(self, request, *args, **kwargs):
+
+        # To raise not found exception
+        from django.urls import resolve
         url_path = request.path
+        resolve(url_path)
+        # --------------------------- #
+
         print('Path: ', url_path)
 
         if not self.is_excluded_path(url_path):

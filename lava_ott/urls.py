@@ -27,16 +27,3 @@ urlpatterns = [
     path(f'{url_prefix}users/', include('users.urls')),
     path(f'{url_prefix}videos/', include('videos.urls'))
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-
-from django.http import Http404
-
-
-def handler404(request, exception):
-    raise Http404
-
-
-urlpatterns += [
-    # Include the 404 handler at the end
-    handler404,
-]
