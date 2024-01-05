@@ -93,7 +93,7 @@ class SubscriptionView(APIView):
             order = Order.objects.get(id=order_id)
 
             if order.user != user:
-                return add_error_response({"message", "Order is not created by the user."}, status=401)
+                return add_error_response({"message": "Order is not created by the user."}, status=401)
 
             if order.is_active is True or order.status == 'completed':
                 return add_error_response({"message", "Already completed order."})
