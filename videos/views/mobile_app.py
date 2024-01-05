@@ -9,7 +9,7 @@ from ..serializers import (
     OrderCreateSerializer,
     OrderListSerializer
 )
-from ..utils import get_order
+from ..utils import get_order, get_video
 from users.utils import get_paginated_list, format_errors, add_error_response, add_success_response
 
 
@@ -22,8 +22,9 @@ class VideoListAppView(APIView):
 
         videos = Video.objects.filter(view_on_app=True)
         data = get_paginated_list(videos, page, per_page)
-        serializer = VideoListSerializer(data['data'], many=True)
-        data['data'] = serializer.data
+        # serializer = VideoListSerializer(data['data'], many=True)
+        # data['data'] = serializer.data
+        data['data'] = [get_video(i) for i in data['data']]
 
         return add_success_response(data)
 
