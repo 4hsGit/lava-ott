@@ -25,7 +25,7 @@ class VideoListAppView(APIView):
         serializer = VideoListSerializer(data['data'], many=True)
         data['data'] = serializer.data
 
-        return Response({'status': True, 'data': data})
+        return add_success_response(data)
 
 
 class OrderCreateView(APIView):
