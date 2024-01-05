@@ -93,7 +93,7 @@ class SubscriptionView(APIView):
             order = Order.objects.get(id=order_id)
 
             if order.is_active is True or order.status == 'completed':
-                return add_error_response("message", "Already completed order.")
+                return add_error_response({"message", "Already completed order."})
 
             order.status = 'completed'
             order.is_active = True
@@ -115,7 +115,7 @@ class VideoPlayView(APIView):
 
         is_subscribed = user.has_subscription()
         if is_subscribed is True:
-            from ..utils import get_videos
+            from ..utils import get_video
             try:
                 from django.db.models import F
                 video = Video.objects.get(id=video_id, view_on_app=True)
@@ -126,16 +126,14 @@ class VideoPlayView(APIView):
                 video.save()
                 # refresh DB
                 video.refresh_from_db()
-                return add_success_response({'data': get_videos(video)})
+                return add_success_response({'data': get_video(video)})
             except Video.DoesNotExist:
-                return Response({
-                    'status': False,
+                return add_error_response({
                     'is_subscribed': is_subscribed,
                     'message': 'Video ID does not exist.'
                 })
         else:
-            return Response({
-                'status': True,
+            return add_error_response({
                 'is_subscribed': is_subscribed
             })
 
