@@ -12,11 +12,11 @@ CORS_ALLOW_ALL_ORIGINS = True
 #     'http://localhost:3000'
 # ]
 CORS_ALLOW_HEADERS = [
-    # 'access-control-allow-headers',
-    # 'access-control-allow-methods',
-    # 'access-control-allow-origin',
-    # 'authorization',
-    # 'content-type',
+    'access-control-allow-headers',
+    'access-control-allow-methods',
+    'access-control-allow-origin',
+    'authorization',
+    'content-type',
     'xauth',
 ]
 
