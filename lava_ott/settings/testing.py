@@ -16,7 +16,7 @@ CORS_ALLOW_HEADERS = [
     'access-control-allow-methods',
     # 'access-control-allow-origin',
     'authorization',
-    # 'content-type',
+    'content-type',
     'xauth',
 ]
 
