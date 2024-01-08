@@ -23,6 +23,8 @@ urlpatterns = [
 
 # Mobile App
 urlpatterns += [
+    path('app-subscription-plan/list/', subscription_plan_app_list, name='app-subscription-plan-list'),
+
     path('app-video-list/', VideoListAppView.as_view(), name='app-video-list'),
     path('app-order-create/', OrderCreateView.as_view(), name='app-order-create'),
     path('app-order-list/', OrderListView.as_view(), name='app-order-list'),

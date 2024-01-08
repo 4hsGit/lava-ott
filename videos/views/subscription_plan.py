@@ -28,6 +28,23 @@ def subscription_plan_list(request):
     return add_success_response({'data': serializer.data}, status=status.HTTP_200_OK)
 
 
+@api_view(['GET'])
+def subscription_plan_app_list(request):
+    data = [
+        {
+            "id": 1,
+            "subscription_amount": 299.0,
+            "subscription_period": "month"
+        },
+        {
+            "id": 2,
+            "subscription_amount": 2999.0,
+            "subscription_period": "year"
+        }
+    ]
+    return add_success_response({'data': data}, status=status.HTTP_200_OK)
+
+
 @api_view(['POST'])
 def subscription_plan_delete(request):
     sub_plan_id = request.data.get('id')
