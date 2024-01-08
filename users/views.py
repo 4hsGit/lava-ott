@@ -25,6 +25,7 @@ class AdminLoginView(views.APIView):
     authentication_classes = ()
 
     def post(self, request, *args, **kwargs):
+        print('-------------- Inside Login --------')
         from .utils import jwt_encode
         from users.models import CustomSession
 
@@ -179,9 +180,9 @@ class AppLoginOTPSendView(views.APIView):
 
         if serializer.is_valid():
             mobile_number = request.data.get('mobile_number')
-            user = authenticate(request, mobile_number=mobile_number)
-            if user is None:
-                return add_error_response({'message': 'Mobile number is not registered.'})
+            # user = authenticate(request, mobile_number=mobile_number)
+            # if user is None:
+            #     return add_error_response({'message': 'Mobile number is not registered.'})
 
             account_sid = "AC9b697e7816c22010ceede5954b66f002"
             auth_token = "78ac2d5732cd5efcfb3f8807d2f0aeae"
@@ -238,22 +239,24 @@ class AppLoginView(views.APIView):
                 # print(verification_status)
                 verification_status = 'approved'
 
-                user = authenticate(request, mobile_number=mobile_number)
-                if user is not None:
+                if verification_status == 'approved' and str(otp) == '123456':
+                    response = {'status': 'success', 'verification_status': verification_status,
+                                'message': 'OTP Verified', 'new_user': True}
 
-                    if verification_status == 'approved' and str(otp) == '123456':
+                    user = authenticate(request, mobile_number=mobile_number)
+                    if user is not None:
 
                         CustomSession.delete_expired_sessions()
 
                         token = CustomSession.set_session(user, session_type='app', keep_me_logged_in=keep_me_logged_in)
                         token = jwt_encode(token)
-                        response = {'status': 'success', 'verification_status': verification_status,
-                                    'message': 'OTP Verified', 'token': token}
+                        response.update({'new_user': False, 'token': token})
                     else:
-                        response = {'status': 'error', 'verification_status': verification_status,
-                                    'message': 'Invalid OTP'}
+                        response.update({'new_user': True})
+
                 else:
-                    response = {'status': 'error', 'message': 'Invalid mobile number'}
+                    response = {'status': 'error', 'verification_status': verification_status,
+                                'message': 'Invalid OTP'}
 
                 return Response(response)
             except Exception as e:

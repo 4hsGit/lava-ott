@@ -10,6 +10,7 @@ from rest_framework.decorators import authentication_classes, permission_classes
 
 @api_view(['POST'])
 def subscription_plan_create(request):
+    print('------------ Inside Subsc Plan create ---------------')
     serializer = SubscriptionPlanSerializer(data=request.data)
     if serializer.is_valid():
         serializer.save()
