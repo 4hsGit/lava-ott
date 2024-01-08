@@ -106,27 +106,22 @@ class UserRegistrationView(views.APIView):
     def post(self, request):
         serializer = UserRegistrationSerializer(data=request.data)
 
-        mob_no = request.data.get('mobile_number')
-        from django.db.models import Q
-        user_exists = get_user_model().objects.filter(
-            Q(username=mob_no) | Q(mobile_number=mob_no))
-        if user_exists:
-            return add_error_response({'message': 'Mobile number registered already.'})
-
         if serializer.is_valid():
             req_data = serializer.validated_data
 
             mob_no = req_data.get('mobile_number')
-            otp = req_data.get('otp')
+            from django.db.models import Q
+            user_exists = get_user_model().objects.filter(
+                Q(username=mob_no) | Q(mobile_number=mob_no)).exists()
+            if user_exists:
+                return add_error_response({'message': 'Mobile number registered already.'})
+
+            mob_no = req_data.get('mobile_number')
             dob = req_data.get('dob')
 
             if dob and dob >= datetime.datetime.now().date():
                 return add_error_response({'message': 'Invalid dob'})
 
-            from .otp import valdiate_otp
-            if valdiate_otp(mob_no, otp) is False:
-                return add_error_response({'error': 'Invalid OTP'})
-            serializer.validated_data.pop('otp')
             serializer.save(username=mob_no)
 
             return add_success_response({
