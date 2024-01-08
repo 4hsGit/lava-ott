@@ -14,7 +14,7 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_HEADERS = [
     'access-control-allow-headers',
     'access-control-allow-methods',
-    # 'access-control-allow-origin',
+    'access-control-allow-origin',
     'authorization',
     'content-type',
     'xauth',
