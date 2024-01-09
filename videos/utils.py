@@ -69,8 +69,8 @@ def subscription_exists(user):
 
 def get_video(video, app=None):
     if app is True:
-        trailer = 'https://s3.ap-south-1.amazonaws.com/4handstudio.in/videos/web+1920x1080.mp4',
-        file = 'https://s3.ap-south-1.amazonaws.com/4handstudio.in/videos/web+1920x1080.mp4',
+        trailer = 'https://s3.ap-south-1.amazonaws.com/4handstudio.in/videos/web+1920x1080.mp4'
+        file = 'https://s3.ap-south-1.amazonaws.com/4handstudio.in/videos/web+1920x1080.mp4'
     else:
         file = video.file.url if video.file else ''
         trailer = video.trailer.url if video.trailer else ''
