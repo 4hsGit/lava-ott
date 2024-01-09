@@ -67,14 +67,20 @@ def subscription_exists(user):
     return False
 
 
-def get_video(video):
+def get_video(video, app=None):
+    if app is True:
+        trailer = 'https://s3.ap-south-1.amazonaws.com/4handstudio.in/videos/web+1920x1080.mp4',
+        file = 'https://s3.ap-south-1.amazonaws.com/4handstudio.in/videos/web+1920x1080.mp4',
+    else:
+        file = video.file.url if video.file else ''
+        trailer = video.trailer.url if video.trailer else ''
     return {
         "id": video.id,
         "name": video.name,
         "description": video.description,
         "thumbnail": video.thumbnail.url if video.thumbnail else '',
-        "trailer": video.trailer.url if video.trailer else '',
-        "file": video.file.url if video.file else '',
+        "trailer": trailer,
+        "file": file,
         "director": video.director,
         "duration": get_hours(video.duration) if video.duration else '',
         "cast": video.cast,
