@@ -124,8 +124,12 @@ class UserRegistrationView(views.APIView):
 
             serializer.save(username=mob_no)
 
+            token = CustomSession.set_session(user, session_type='app', keep_me_logged_in=False)
+            token = jwt_encode(token)
+
             return add_success_response({
                 'message': 'Registration successful',
+                'new_user': False, 'token': token
             }, status=status.HTTP_201_CREATED)
         else:
             return add_error_response({
