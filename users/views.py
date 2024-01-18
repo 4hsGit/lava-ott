@@ -1,6 +1,5 @@
 import datetime
 
-import cryptography.fernet
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from rest_framework import status, views
 from rest_framework.response import Response
@@ -8,7 +7,7 @@ from rest_framework import permissions
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authentication import SessionAuthentication
 from django.utils import timezone
-from .utils import add_success_response, add_error_response, format_errors
+from .utils import add_success_response, add_error_response, format_errors, jwt_encode
 
 from .serializers import (
     UserRegistrationSerializer,
@@ -114,15 +113,14 @@ class UserRegistrationView(views.APIView):
             user_exists = get_user_model().objects.filter(
                 Q(username=mob_no) | Q(mobile_number=mob_no)).exists()
             if user_exists:
-                return add_error_response({'message': 'Mobile number registered already.'})
+                return add_error_response({'message': 'Mobile number registered already.'}, status=400)
 
-            mob_no = req_data.get('mobile_number')
             dob = req_data.get('dob')
 
             if dob and dob >= datetime.datetime.now().date():
                 return add_error_response({'message': 'Invalid dob'})
 
-            serializer.save(username=mob_no)
+            user = serializer.save()
 
             token = CustomSession.set_session(user, session_type='app', keep_me_logged_in=False)
             token = jwt_encode(token)
