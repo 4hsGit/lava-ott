@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # new
     'rest_framework',
     'corsheaders',
+    'storages',
     # local apps
     'users.apps.UsersConfig',
     'videos.apps.VideosConfig'
@@ -131,12 +132,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATIC_FILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'lavaott_media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'lavaott_media')
 MEDIA_URL = 'lavaott_media/'
 
 # Default primary key field type
@@ -171,3 +172,30 @@ USER_KEEP_SESSION_AGE = 300  # In seconds
 USER_SESSION_AGE = 300  # In seconds
 
 # CORS_ALLOWED_ORIGINS = ['https://lavaott-979ac37aaaa6.herokuapp.com']
+
+# AWS S3 Bucket Conf
+
+AWS_ACCESS_KEY_ID = 'AKIAQ3EGQOD37YLYDA5E' # Local Code
+# AWS_ACCESS_KEY_ID = 'AKIAQ3EGQOD3UM3TO7EH' # Third Party
+# AWS_ACCESS_KEY_ID = 'AKIAQ3EGQOD3ZSU7I4FG' # Other
+AWS_SECRET_ACCESS_KEY = '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' # Local Code
+# AWS_SECRET_ACCESS_KEY = 'l6IyrAC99Wzo+enOYSHRbzwU1DYRnwKDjPv1B5Ck' # Third Party
+# AWS_SECRET_ACCESS_KEY = '0GO1NfukevXvVbXT79YAqxZcC0myVfA+4/3H4Qr/' # Other
+AWS_STORAGE_BUCKET_NAME = 'lavao-bucket'
+AWS_S3_REGION_NAME = 'ap-south-1'
+
+AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+
+# For serving static files directly from S3
+AWS_S3_URL_PROTOCOL = 'https:'
+# AWS_S3_USE_SSL = True
+AWS_S3_VERIFY = True
+
+AWS_DEFAULT_ACL = None
+
+# Static and media file configuration
+# STATIC_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/static/'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/media/'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
