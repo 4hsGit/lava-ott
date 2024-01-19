@@ -24,7 +24,7 @@ class VideoListAppView(APIView):
         data = get_paginated_list(videos, page, per_page)
         # serializer = VideoListSerializer(data['data'], many=True)
         # data['data'] = serializer.data
-        data['data'] = [get_video(i, app=True) for i in data['data']]
+        data['data'] = [get_video(i) for i in data['data']]
 
         return add_success_response(data)
 
