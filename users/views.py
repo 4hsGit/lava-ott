@@ -118,7 +118,7 @@ class UserRegistrationView(views.APIView):
             dob = req_data.get('dob')
 
             if dob and dob >= datetime.datetime.now().date():
-                return add_error_response({'message': 'Invalid dob'})
+                return add_error_response({'message': 'Invalid dob'}, status=400)
 
             user = serializer.save()
 
