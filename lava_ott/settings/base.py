@@ -131,14 +131,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-# STATIC_URL = 'static/'
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # STATIC_FILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 # STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
-# MEDIA_ROOT = os.path.join(BASE_DIR, 'lavaott_media')
-# MEDIA_URL = 'lavaott_media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'lavaott_media')
+MEDIA_URL = 'lavaott-media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -174,32 +174,32 @@ USER_SESSION_AGE = 300  # In seconds
 # CORS_ALLOWED_ORIGINS = ['https://lavaott-979ac37aaaa6.herokuapp.com']
 
 # AWS S3 Bucket Conf
-
-AWS_ACCESS_KEY_ID = 'AKIAQ3EGQOD37LQE7U4C' # Local Code
-# AWS_ACCESS_KEY_ID = 'AKIAQ3EGQOD3UM3TO7EH' # Third Party
-# AWS_ACCESS_KEY_ID = 'AKIAQ3EGQOD3XT7WVM5L' # Other
-# AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY = '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' # Local Code
-# AWS_SECRET_ACCESS_KEY = 'l6IyrAC99Wzo+enOYSHRbzwU1DYRnwKDjPv1B5Ck' # Third Party
-# AWS_SECRET_ACCESS_KEY = 'XsgDZ6RY0YOCc+eqwJ9RPDQW4Tqo5E//9uBvHYgG' # Other
-# AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
-AWS_STORAGE_BUCKET_NAME = 'lavao-bucket'
-AWS_S3_REGION_NAME = 'ap-south-1'
-
-AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
-
-# For serving static files directly from S3
-AWS_S3_URL_PROTOCOL = 'https:'
-# AWS_S3_USE_SSL = True
-# AWS_S3_VERIFY = True
-
-# AWS_DEFAULT_ACL = None
-
-# Static and media file configuration
-STATIC_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/static/'
-STATIC_ROOT = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-
-MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/media/'
-MEDIA_ROOT = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/'
-DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+#
+# AWS_ACCESS_KEY_ID = 'AKIAQ3EGQOD37LQE7U4C' # Local Code
+# # AWS_ACCESS_KEY_ID = 'AKIAQ3EGQOD3UM3TO7EH' # Third Party
+# # AWS_ACCESS_KEY_ID = 'AKIAQ3EGQOD3XT7WVM5L' # Other
+# # AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+# AWS_SECRET_ACCESS_KEY = '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' # Local Code
+# # AWS_SECRET_ACCESS_KEY = 'l6IyrAC99Wzo+enOYSHRbzwU1DYRnwKDjPv1B5Ck' # Third Party
+# # AWS_SECRET_ACCESS_KEY = 'XsgDZ6RY0YOCc+eqwJ9RPDQW4Tqo5E//9uBvHYgG' # Other
+# # AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+# AWS_STORAGE_BUCKET_NAME = 'lavao-bucket'
+# AWS_S3_REGION_NAME = 'ap-south-1'
+#
+# AWS_S3_CUSTOM_DOMAIN = f'{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com'
+#
+# # For serving static files directly from S3
+# AWS_S3_URL_PROTOCOL = 'https:'
+# # AWS_S3_USE_SSL = True
+# # AWS_S3_VERIFY = True
+#
+# # AWS_DEFAULT_ACL = None
+#
+# # Static and media file configuration
+# STATIC_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/static/'
+# STATIC_ROOT = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}'
+# STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+#
+# MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/media/'
+# MEDIA_ROOT = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/media'
+# DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
