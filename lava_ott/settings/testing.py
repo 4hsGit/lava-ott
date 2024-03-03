@@ -20,20 +20,3 @@ CORS_ALLOW_HEADERS = [
     'xauth',
 ]
 
-import django_heroku
-
-django_heroku.settings(locals())
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'console': {
-            'class': 'logging.StreamHandler',
-        },
-    },
-    'root': {
-        'handlers': ['console'],
-        'level': 'INFO',
-    },
-}
