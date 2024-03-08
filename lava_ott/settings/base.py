@@ -53,7 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
 
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',
 
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
@@ -204,3 +204,10 @@ USER_SESSION_AGE = 300  # In seconds
 # MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/media/'
 # MEDIA_ROOT = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/media'
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+
+# ----- OTP ----- #
+
+OTP_API_KEY = 'c744a792-cf26-11ee-8cbb-0200cd936042'
+OTP_SEND_URL = ''
+OTP_VERIFY_URL = ''
