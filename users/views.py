@@ -199,7 +199,7 @@ class AppLoginOTPSendView(views.APIView):
                 from .utils import send_otp
                 status, message = send_otp(mobile_number)
                 if status == 'Success':
-                    return add_success_response({"message": 'OTP sent successfully.'})
+                    return add_success_response({"message": 'OTP sent'})
                 else:
                     return add_error_response({'message': message})
             except Exception as e:
