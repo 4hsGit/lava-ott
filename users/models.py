@@ -39,7 +39,7 @@ class User(AbstractUser):
 
 
 class CustomSession(models.Model):
-    session_key = models.TextField(db_index=True, primary_key=True)
+    session_key = models.CharField(max_length=200, db_index=True, primary_key=True)
     session_data = models.TextField()
     expire_date = models.DateTimeField()
     inactive_count = models.IntegerField()
