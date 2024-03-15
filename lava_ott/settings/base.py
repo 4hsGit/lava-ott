@@ -14,7 +14,7 @@ from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-print(BASE_DIR)
+print('base dir -> ', BASE_DIR)
 # BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Quick-start development settings - unsuitable for production
@@ -24,7 +24,7 @@ print(BASE_DIR)
 SECRET_KEY = 'django-insecure-42zoh+(%^q^)$kypaa6ub83satxd_do!3x=it2kk4f#42m#hzl'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # import django_heroku
 # import dj_database_url
