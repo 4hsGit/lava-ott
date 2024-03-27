@@ -157,18 +157,19 @@ def str_to_json(data):
 
 def send_otp(mobile_number):
     from django.conf import settings
-    otp_url = 'https://2factor.in/API/V1/{}/SMS/{}/AUTOGEN/OTP_2'
-    otp_url = otp_url.format(settings.OTP_API_KEY, mobile_number)
+    otp_url = settings.OTP_SEND_URL.format(settings.OTP_API_KEY, mobile_number)
     response = requests.get(otp_url)
     response_text = loads(response.text)
-    return response_text['Status'], response_text['Details']
+    print('otp send response -> ', response_text)
+    # return response_text['Status'], response_text['Details']
+    return response_text
 
 
 def verify_otp(otp, mobile_number):
     from django.conf import settings
-    otp_url = settings.OTP_VERIFY_URL
-    otp_url = otp_url.format(settings.OTP_API_KEY, mobile_number, otp)
+    otp_url = settings.OTP_VERIFY_URL.format(settings.OTP_API_KEY, mobile_number, otp)
     response = requests.get(otp_url)
     response_text = loads(response.text)
-    return response_text['Status'], response_text['Details']
-
+    print('otp verify response -> ', response_text)
+    # return response_text['Status'], response_text['Details']
+    return response_text

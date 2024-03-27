@@ -211,5 +211,9 @@ USER_SESSION_AGE = 300  # In seconds
 # ----- OTP ----- #
 
 OTP_API_KEY = 'c744a792-cf26-11ee-8cbb-0200cd936042'
-OTP_SEND_URL = ''
-OTP_VERIFY_URL = ''
+
+OTP_SEND_URL = 'https://2factor.in/API/V1/{}/SMS/{}/AUTOGEN/OTP_2'  # Main
+# OTP_SEND_URL = 'https://2factor.in/API/V1/{}/SMS/{}/AUTOGEN2/OTP_2'
+# OTP_SEND_URL = 'https://2factor.in/API/V1/{}/SMS/{}/AUTOGEN3/OTP_2'
+
+OTP_VERIFY_URL = 'https://2factor.in/API/V1/{}/SMS/VERIFY3/{}/{}'

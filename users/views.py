@@ -177,6 +177,7 @@ class AppLoginOTPSendView(views.APIView):
 
         if serializer.is_valid():
             mobile_number = request.data.get('mobile_number')
+            otp_data = request.data.get('otp_data')
             # user = authenticate(request, mobile_number=mobile_number)
             # if user is None:
             #     return add_error_response({'message': 'Mobile number is not registered.'})
@@ -197,11 +198,14 @@ class AppLoginOTPSendView(views.APIView):
                 # print(verification.status)
 
                 from .utils import send_otp
-                status, message = send_otp(mobile_number)
-                if status == 'Success':
-                    return add_success_response({"message": 'OTP sent'})
+                otp_response = send_otp(mobile_number)
+                if otp_response['Status'] == 'Success':
+                    cont = {"message": 'OTP sent'}
+                    if otp_data:
+                        cont.update({'otp_data': otp_response})
+                    return add_success_response(cont)
                 else:
-                    return add_error_response({'message': message})
+                    return add_error_response({'message': otp_response['Details']})
             except Exception as e:
                 print('OTP send Exception - ', str(e))
                 return add_error_response({'message': 'Couldn\'t send otp.'})
@@ -223,6 +227,7 @@ class AppLoginView(views.APIView):
             mobile_number = serializer.data.get('mobile_number')
             otp = serializer.data.get('otp')
             keep_me_logged_in = serializer.data.get('keep_me_logged_in')
+            otp_data = serializer.data.get('otp_data')
 
             print('keep_me_logged_in: ', keep_me_logged_in)
 
@@ -247,10 +252,12 @@ class AppLoginView(views.APIView):
                 #                 'message': 'OTP Verified', 'new_user': True}
 
                 from .utils import verify_otp
-                status, message = verify_otp(otp, mobile_number)
-                if status == 'Success':
-                    response = {'status': 'success', 'verification_message': message,
+                otp_response = verify_otp(otp, mobile_number)
+                if otp_response['Status'] == 'Success':
+                    response = {'status': 'success', 'verification_message': otp_response['Details'],
                                 'message': 'OTP Verified'}
+                    if otp_data:
+                        response.update({'otp_data': otp_response})
                     user = authenticate(request, mobile_number=mobile_number)
                     if user is not None:
 
