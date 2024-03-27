@@ -30,7 +30,7 @@ class VideoCreateView(APIView):
             from moviepy.video.io.VideoFileClip import VideoFileClip
             from django.conf import settings
             import os
-            file_path = os.path.join(settings.MEDIA_ROOT, obj.file.name)
+            file_path = os.path.join(settings.MEDIA_URL, obj.file.name)
             print(file_path)
             clip = VideoFileClip(file_path)
             d = clip.duration
