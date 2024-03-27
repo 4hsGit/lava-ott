@@ -23,3 +23,5 @@ CORS_ALLOW_HEADERS = [
     'content-type',
     'xauth',
 ]
+
+OTP_SEND = True

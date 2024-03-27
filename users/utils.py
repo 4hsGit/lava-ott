@@ -157,6 +157,9 @@ def str_to_json(data):
 
 def send_otp(mobile_number):
     from django.conf import settings
+
+    if settings.OTP_SEND is False:
+        return {'Status': 'Success', "Details": "OTP Sent"}
     otp_url = settings.OTP_SEND_URL.format(settings.OTP_API_KEY, mobile_number)
     response = requests.get(otp_url)
     response_text = loads(response.text)
@@ -167,6 +170,8 @@ def send_otp(mobile_number):
 
 def verify_otp(otp, mobile_number):
     from django.conf import settings
+    if settings.OTP_SEND is False:
+        return {'Status': 'Success', 'Details': 'OTP Matched'}
     otp_url = settings.OTP_VERIFY_URL.format(settings.OTP_API_KEY, mobile_number, otp)
     response = requests.get(otp_url)
     response_text = loads(response.text)
