@@ -32,6 +32,7 @@ class VideoCreateView(APIView):
             import os
             file_path = os.path.join(settings.MEDIA_URL, obj.file.name)
             print(file_path)
+            print('type ---> ', type(file_path))
             clip = VideoFileClip(file_path)
             d = clip.duration
             print('duration  = ', d)
