@@ -27,18 +27,30 @@ class VideoCreateView(APIView):
             print('Saved !!!!!')
 
             # Set duration
+            # Moviepy
             from moviepy.video.io.VideoFileClip import VideoFileClip
             from django.conf import settings
             import os
+            # Opencv
+            import cv2
             file_path = os.path.join(settings.MEDIA_URL, obj.file.name)
             print(file_path)
-            print('type ---> ', type(file_path))
-            clip = VideoFileClip(file_path)
-            d = clip.duration
-            print('duration  = ', d)
-            clip.close()
+            # clip = VideoFileClip(file_path)
+            # d = clip.duration
+            # print('duration  = ', d)
+            # clip.close()
 
-            obj.duration = d
+            cv = cv2.VideoCapture(file_path)
+            fps = cv.get(cv2.CAP_PROP_FPS)
+            seconds = cv.get(cv2.CAP_PROP_FRAME_COUNT)
+            duration = seconds / fps
+
+            print('----------- opencv response -----------')
+            print('fps -- ', fps)
+            print('sec -- ', seconds)
+            print('duration -- ', duration)
+
+            obj.duration = duration
             obj.save()
 
             return add_success_response({
