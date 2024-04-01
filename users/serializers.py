@@ -45,3 +45,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.update({'username': validated_data.get('mobile_number')})
         return User.objects.create(**validated_data)
+
+
+class ProfileImageSerializer(serializers.Serializer):
+    image = serializers.ImageField()
