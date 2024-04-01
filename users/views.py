@@ -346,9 +346,26 @@ class UserProfileView(views.APIView):
             "last_name": user.last_name,
             "mobile_number": get_masked_number(user),
             "is_subscriber": is_subscriber,
+            "image": user.image.url if user.image else '',
             "orders": get_orders(user)
         }
         return add_success_response({'data': data})
+
+
+class UserProfileImageUpdateView(views.APIView):
+    def post(self, request, *args, **kwargs):
+        from .serializers import ProfileImageSerializer
+        serializer = ProfileImageSerializer(data=request.data)
+        if serializer.is_valid():
+            user = request.customuser
+            print('------- image = = ', request.data.get('image'))
+            user.image = request.data.get('image')
+            user.save()
+            return add_success_response({'message': 'Profile image updated'})
+        else:
+            return add_error_response({
+                'error': format_errors(serializer.errors)
+            })
 
 
 def test_delete_view(request):

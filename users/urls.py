@@ -19,6 +19,7 @@ urlpatterns = [
     path('app/registration/', UserRegistrationView.as_view()),
     path('app/status/', UserStatusAppView.as_view()),
     path('app/profile/', UserProfileView.as_view()),
+    path('app/profile-image-update/', UserProfileImageUpdateView.as_view()),
 ]
 
 # Test
