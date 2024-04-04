@@ -17,6 +17,8 @@ def get_expiry_date(date, period):
 
 
 def get_order(order):
+    start_date = order.start_date.astimezone() if order.start_date else ''
+    expiration_date = order.expiration_date.astimezone() if order.expiration_date else ''
     return {
         "id": order.id,
         "user": order.user.get_full_name(),
@@ -24,10 +26,10 @@ def get_order(order):
         "subscription_period": order.subscription_period,
         "status": order.status,
         "created_at": order.created_at.strftime("%d %m %Y"),
-        "start_date": order.start_date.strftime("%d/%m/%Y") if order.start_date else '',
-        "start_time": order.start_date.time().strftime("%H:%M%p") if order.start_date else '',
-        "expiration_date": order.expiration_date.strftime("%d/%m/%Y") if order.expiration_date else '',
-        "expiration_time": order.expiration_date.time().strftime("%H:%M%p") if order.expiration_date else '',
+        "start_date": start_date.strftime("%d/%m/%Y") if order.start_date else '',
+        "start_time": start_date.strftime("%H:%M%p") if order.start_date else '',
+        "expiration_date": expiration_date.strftime("%d/%m/%Y") if order.expiration_date else '',
+        "expiration_time": expiration_date.strftime("%H:%M%p") if order.expiration_date else '',
         "is_active": order.is_active,
     }
 
