@@ -209,7 +209,7 @@ DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
 
 # ----- OTP ----- #
-OTP_SEND = False
+OTP_SEND = True
 
 OTP_API_KEY = 'c744a792-cf26-11ee-8cbb-0200cd936042'
 
@@ -219,3 +219,6 @@ OTP_SEND_URL = 'https://2factor.in/API/V1/{}/SMS/{}/AUTOGEN/OTP_2'  # Main
 # OTP_SEND_URL = 'https://2factor.in/API/V1/{}/SMS/{}/1111/OTP_2'
 
 OTP_VERIFY_URL = 'https://2factor.in/API/V1/{}/SMS/VERIFY3/{}/{}'
+
+VERIFIED_NUMBERS = ['8075554765']
+VERIFIED_OTPS = ['123456']
