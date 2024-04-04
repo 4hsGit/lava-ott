@@ -172,6 +172,8 @@ def verify_otp(otp, mobile_number):
     from django.conf import settings
     if settings.OTP_SEND is False:
         return {'Status': 'Success', 'Details': 'OTP Matched'}
+    if str(mobile_number) in settings.VERIFIED_NUMBERS and str(otp) in settings.VERIFIED_OTPS:
+        return {'Status': 'Success', 'Details': 'OTP Matched'}
     otp_url = settings.OTP_VERIFY_URL.format(settings.OTP_API_KEY, mobile_number, otp)
     response = requests.get(otp_url)
     response_text = loads(response.text)
