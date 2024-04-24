@@ -33,13 +33,18 @@ def subscription_plan_app_list(request):
     data = [
         {
             "id": 1,
-            "subscription_amount": 299.0,
-            "subscription_period": "month"
+            "subscription_amount": 198.00,
+            "subscription_period": 26
         },
         {
             "id": 2,
-            "subscription_amount": 2999.0,
-            "subscription_period": "year"
+            "subscription_amount": 298.0,
+            "subscription_period": 36
+        },
+        {
+            "id": 3,
+            "subscription_amount": 1098.0,
+            "subscription_period": 182
         }
     ]
     return add_success_response({'data': data}, status=status.HTTP_200_OK)
