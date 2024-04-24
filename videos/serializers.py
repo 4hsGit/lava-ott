@@ -60,7 +60,7 @@ class VideoListSerializer(serializers.ModelSerializer):
 
 
 class OrderCreateSerializer(serializers.ModelSerializer):
-    subscription_period = serializers.ChoiceField(choices=[('year', 'year'), ('month', 'month')])
+    # subscription_period = serializers.ChoiceField(choices=[('year', 'year'), ('month', 'month')])
 
     class Meta:
         model = Order
