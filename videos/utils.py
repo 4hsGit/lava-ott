@@ -4,14 +4,14 @@ from django.utils import timezone
 
 def get_expiry_date(date, period):
     from datetime import timedelta
-    if period == 'month':
-        days = 31
-    elif period == 'year':
-        days = 365.25
-    else:
-        days = 0
+    # if period == 'month':
+    #     days = 31
+    # elif period == 'year':
+    #     days = 365.25
+    # else:
+    #     days = 0
 
-    exp_date = date + timedelta(days)
+    exp_date = date + timedelta(int(period))
     print('Calculated Expiry date = ', date, '+', days, '=', exp_date)
     return exp_date
 
