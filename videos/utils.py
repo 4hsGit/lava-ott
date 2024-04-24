@@ -12,7 +12,7 @@ def get_expiry_date(date, period):
     #     days = 0
 
     exp_date = date + timedelta(int(period))
-    print('Calculated Expiry date = ', date, '+', days, '=', exp_date)
+    print('Calculated Expiry date = ', date, '+', period, '=', exp_date)
     return exp_date
 
 
