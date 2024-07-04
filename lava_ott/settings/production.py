@@ -26,21 +26,21 @@ CORS_ALLOW_HEADERS = [
 
 OTP_SEND = True
 
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'nginx_error_log': {
-            'level': 'DEBUG',
-            'class': 'logging.handlers.WatchedFileHandler',
-            'filename': '/var/log/nginx/error.log',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['nginx_error_log'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
+# LOGGING = {
+#     'version': 1,
+#     'disable_existing_loggers': False,
+#     'handlers': {
+#         'nginx_error_log': {
+#             'level': 'DEBUG',
+#             'class': 'logging.handlers.WatchedFileHandler',
+#             'filename': '/var/log/nginx/error.log',
+#         },
+#     },
+#     'loggers': {
+#         'django': {
+#             'handlers': ['nginx_error_log'],
+#             'level': 'DEBUG',
+#             'propagate': True,
+#         },
+#     },
+# }
