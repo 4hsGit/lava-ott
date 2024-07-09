@@ -21,6 +21,7 @@ class CustomMiddleWare:
                                )
         self.admin_paths = [
             '/api/users/setproject/',
+            '/api/users/setadmin/',
         ]
 
     def check_server_status(self):
