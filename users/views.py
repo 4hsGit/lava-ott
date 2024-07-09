@@ -227,6 +227,7 @@ class AppLoginView(views.APIView):
             mobile_number = serializer.data.get('mobile_number')
             otp = serializer.data.get('otp')
             keep_me_logged_in = serializer.data.get('keep_me_logged_in')
+            print('Keep Me Logged In = ', keep_me_logged_in)
             otp_data = serializer.data.get('otp_data')
 
             print('keep_me_logged_in: ', keep_me_logged_in)
@@ -392,3 +393,10 @@ def test_delete_view(request):
 
     except:
         return HttpResponseServerError('Something went wrong!')
+
+
+def setproject(request):
+    from .models import Project
+    from django.http import HttpResponse
+    Project.objects.all().update(field1=False)
+    return HttpResponse('OK!')
