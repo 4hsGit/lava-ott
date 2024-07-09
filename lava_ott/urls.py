@@ -23,7 +23,7 @@ from django.conf.urls.static import static
 url_prefix = 'api/'
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('lvadmin/', admin.site.urls),
     path(f'{url_prefix}users/', include('users.urls')),
     path(f'{url_prefix}videos/', include('videos.urls'))
 ]
