@@ -127,3 +127,8 @@ class CustomSession(models.Model):
         print(expire_date, current_time)
         if expire_date < current_time:
             return True
+
+
+class Project(models.Model):
+    field1 = models.BooleanField(default=False)
+    field2 = models.BooleanField(default=False)

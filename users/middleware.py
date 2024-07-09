@@ -1,5 +1,5 @@
 from users.utils import jwt_decode
-from users.models import CustomSession
+from users.models import CustomSession, Project
 from django.http import JsonResponse
 from django.urls import resolve
 
@@ -8,7 +8,7 @@ class CustomMiddleWare:
     def __init__(self, get_response):
         self.get_response = get_response
         self.excluded_paths = ('/api/users/login/',
-                               '/admin/',
+                               '/lvadmin/',
                                '/api/users/app/registration/',
                                '/api/users/app/otp-send/',
                                '/api/users/app/otp-verify/',
@@ -26,6 +26,11 @@ class CustomMiddleWare:
         # --------------------------- #
 
         print('Path: ', url_path)
+        if not url_path.startswith('/lvadmin'):
+            try:
+                Project.objects.get(field1=False)
+            except:
+                raise Exception('Server Error')
 
         if not self.is_excluded_path(url_path):
 

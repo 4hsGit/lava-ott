@@ -74,8 +74,9 @@ def get_video(video, app=None):
         trailer = 'https://s3.ap-south-1.amazonaws.com/4handstudio.in/videos/web+1920x1080.mp4'
         file = 'https://s3.ap-south-1.amazonaws.com/4handstudio.in/videos/lava+test+1min.mp4'
     else:
-        file = video.file.url if video.file else ''
-        trailer = video.trailer.url if video.trailer else ''
+        file, trailer = '', ''
+        # file = video.file.url if video.file else ''
+        # trailer = video.trailer.url if video.trailer else ''
     return {
         "id": video.id,
         "name": video.name,
