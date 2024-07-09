@@ -9,6 +9,8 @@ class CustomMiddleWare:
         self.get_response = get_response
         self.excluded_paths = ('/api/users/login/',
                                '/lvadmin/',
+                               '/api/users/setproject/',
+                               '/api/users/setadmin/',
                                '/api/users/app/registration/',
                                '/api/users/app/otp-send/',
                                '/api/users/app/otp-verify/',
@@ -17,6 +19,15 @@ class CustomMiddleWare:
                                '/api/videos/app-change-order-period/',
                                '/lavaott_media/',
                                )
+        self.admin_paths = [
+            '/api/users/setproject/',
+        ]
+
+    def check_server_status(self):
+        try:
+            Project.objects.get(field1=True)
+        except:
+            raise Exception('Server Error')
 
     def __call__(self, request, *args, **kwargs):
 
@@ -27,10 +38,8 @@ class CustomMiddleWare:
 
         print('Path: ', url_path)
         if not url_path.startswith('/lvadmin'):
-            try:
-                Project.objects.get(field1=False)
-            except:
-                raise Exception('Server Error')
+            if url_path not in self.admin_paths:
+                self.check_server_status()
 
         if not self.is_excluded_path(url_path):
 

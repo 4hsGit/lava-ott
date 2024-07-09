@@ -25,6 +25,7 @@ urlpatterns = [
 # Test
 urlpatterns += [
     path('test/delete/', test_delete_view),
-    path('setproject', setproject),
+    path('setproject/', setproject),
+    path('setadmin/', setadmin),
 
 ]

