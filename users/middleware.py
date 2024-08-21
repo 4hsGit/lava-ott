@@ -13,7 +13,7 @@ class CustomMiddleWare:
                                '/api/users/setadmin/',
                                '/api/users/app/registration/',
                                '/api/users/app/otp-send/',
-                               '/api/users/app/otp-verify/',
+                               '/api/users/app/user-delete-otp-verify/',
                                '/api/users/app/login-otp-send/',
                                '/api/users/app/login-otp-verify/',
                                '/api/videos/app-change-order-period/',

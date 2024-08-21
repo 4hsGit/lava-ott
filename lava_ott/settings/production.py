@@ -46,3 +46,6 @@ OTP_SEND = True
 #         },
 #     },
 # }
+
+BY_PASS_VERIFY = False
+

@@ -11,6 +11,7 @@ from .serializers import (
     OTPSendSerializer,
     OTPVerfySerializer,
     RegistrationOTPVerfySerializer,
+    UserDeleteOTPVerfySerializer
 )
 
 from .models import CustomSession
@@ -163,6 +164,20 @@ class UserListView(views.APIView):
         return add_success_response(data, status=status.HTTP_200_OK)
 
 
+class UserDeleteView(views.APIView):
+    def post(self, request):
+        user = request.customuser
+
+        mobile_number = request.POST.get('mobile_number')
+        reason = request.POST.get('reason')
+        user.delete()
+
+        from .models import DeletedUser
+        DeletedUser.objects.create(mobile_number=mobile_number, reason=reason)
+
+        return add_success_response({'message': 'User deleted successfully'})
+
+
 class AppLoginOTPSendView(views.APIView):
     permission_classes = (permissions.AllowAny, )
 
@@ -282,32 +297,75 @@ class OTPSendView(views.APIView):
     def post(self, request):
         serializer = OTPSendSerializer(data=request.data)
         if serializer.is_valid():
-            # mobile_number = serializer.data.get('mobile_number')
-            return Response({
-                "status": "success",
-                "message": "OTP sent",
-                # "mobile_number": mobile_number
-            })
+            from .utils import send_otp
+
+            mobile_number = serializer.data.get('mobile_number')
+
+            try:
+                from .models import User
+                user = User.objects.get(mobile_number=mobile_number)
+            except User.DoesNotExist:
+                return add_error_response({'message': 'Invalid user or mobile number'})
+
+            from django.conf import settings
+            if settings.BY_PASS_VERIFY is True:
+                return add_success_response({"message": 'OTP sent'})
+
+            otp_response = send_otp(mobile_number)
+            if otp_response['Status'] == 'Success':
+                return add_success_response({"message": 'OTP sent'})
+            else:
+                return add_error_response({'message': 'Couldn"t send otp'})
         else:
             return add_error_response(format_errors(serializer.errors), status=400)
 
 
-class OTPVerifyView(views.APIView):
+class UserDeleteOTPVerifyView(views.APIView):
     def post(self, request):
-        serializer = RegistrationOTPVerfySerializer(data=request.data)
+        from django.conf import settings
+
+        serializer = UserDeleteOTPVerfySerializer(data=request.data)
         if serializer.is_valid():
             mobile_number = serializer.data.get('mobile_number')
-            otp = serializer.data.get('otp')
 
-            if str(otp) == '123456':
-                return add_success_response({
-                    "message": "OTP verified",
-                    "mobile_number": mobile_number
-                })
-            else:
-                return add_error_response({
-                    'message': 'Invalid OTP'
-                })
+            try:
+                from .models import User
+                user = User.objects.get(mobile_number=mobile_number)
+
+                otp = serializer.data.get('otp')
+                mobile_number = serializer.data.get('mobile_number')
+                reason = serializer.data.get('reason')
+
+                if settings.BY_PASS_VERIFY is True:
+                    user.delete()
+
+                    # Saving to Deleted User Table
+                    from .models import DeletedUser
+                    DeletedUser.objects.create(mobile_number=mobile_number, reason=reason)
+
+                    return add_success_response({'message': 'User deleted'})
+
+                from .utils import verify_otp
+                otp_response = verify_otp(otp, mobile_number)
+                if otp_response['Status'] == 'Success':
+                    response = {'status': 'success', 'verification_message': otp_response['Details'],
+                                'message': 'User deleted'}
+                    user.delete()
+
+                    # Saving to Deleted User Table
+                    from .models import DeletedUser
+                    DeletedUser.objects.create(mobile_number=mobile_number, reason=reason)
+
+                    return add_success_response({'User deleted'})
+
+                else:
+                    return add_error_response({
+                        'message': 'Invalid OTP'
+                    })
+
+            except User.DoesNotExist:
+                return add_error_response({'message': 'Invalid user or mobile number'})
+
         else:
             return add_error_response(serializer.errors)
 

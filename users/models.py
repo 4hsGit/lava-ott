@@ -132,3 +132,9 @@ class CustomSession(models.Model):
 class Project(models.Model):
     field1 = models.BooleanField(default=False)
     field2 = models.BooleanField(default=False)
+
+
+class DeletedUser(models.Model):
+    mobile_number = models.CharField(max_length=50)
+    reason = models.CharField(max_length=200)
+    remarks = models.CharField(max_length=200, blank=True, null=True)
