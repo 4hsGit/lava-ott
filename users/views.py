@@ -167,13 +167,11 @@ class UserListView(views.APIView):
 class UserDeleteView(views.APIView):
     def post(self, request):
         user = request.customuser
-
-        mobile_number = request.POST.get('mobile_number')
         reason = request.POST.get('reason')
-        user.delete()
 
         from .models import DeletedUser
-        DeletedUser.objects.create(mobile_number=mobile_number, reason=reason)
+        DeletedUser.objects.create(mobile_number=user.mobile_number, reason=reason)
+        user.delete()
 
         return add_success_response({'message': 'User deleted successfully'})
 
