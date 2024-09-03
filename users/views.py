@@ -176,6 +176,59 @@ class UserDeleteView(views.APIView):
         return add_success_response({'message': 'User deleted successfully'})
 
 
+class AdminUserSearchView(views.APIView):
+    def post(self, request):
+        from users.models import User
+        mobile_number = request.POST.get('mobile_number')
+        try:
+            user = User.objects.get(mobile_number=mobile_number)
+            return add_success_response({
+                "id": user.id,
+                "mobile_number": mobile_number,
+                "is_subscriber": user.has_subscription(),
+            })
+        except User.DoesNotExist:
+            return add_error_response({'message': 'Invalid mobile_number'})
+
+
+class AdminUserSubscribeView(views.APIView):
+    def post(self, request):
+        from users.models import User
+        from videos.models import Order
+
+        from videos.utils import get_expiry_date
+
+        user_id = request.POST.get('id')
+        try:
+            user = User.objects.get(id=user_id)
+
+            if user.has_subscription() is True:
+                return add_error_response({"message": "Already a subscriber"})
+
+            subscription_amount = request.POST.get('subscription_amount')
+            subscription_period = request.POST.get('subscription_period')
+
+            from django.utils import timezone
+            new_start_date = timezone.now()
+
+            order = Order()
+            order.user = user
+            order.subscription_amount = subscription_amount
+            order.subscription_period = subscription_period
+            order.status = 'completed'
+            order.is_active = True
+            order.start_date = new_start_date
+            order.expiration_date = get_expiry_date(new_start_date, period=order.subscription_period)
+            order.save()
+
+            return add_success_response({
+                "message": "Subscription created for the user"
+            })
+
+        except User.DoesNotExist:
+            return add_error_response({'message': 'Invalid user'})
+
+
 class AppLoginOTPSendView(views.APIView):
     permission_classes = (permissions.AllowAny, )
 
