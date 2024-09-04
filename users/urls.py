@@ -16,6 +16,7 @@ urlpatterns = [
     path('list/', UserListView.as_view()),
     path('admin-user-search/', AdminUserSearchView.as_view()),
     path('admin-user-subscribe/', AdminUserSubscribeView.as_view()),
+    path('admin-user-unsubscribe/', AdminUserUnsubscribeView.as_view()),
     path('app/delete/', UserDeleteView.as_view()),
 
     # Mobile App

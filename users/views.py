@@ -229,6 +229,30 @@ class AdminUserSubscribeView(views.APIView):
             return add_error_response({'message': 'Invalid user'})
 
 
+class AdminUserUnsubscribeView(views.APIView):
+    def post(self, request):
+        from users.models import User
+        from videos.models import Order
+        from django.utils import timezone
+
+        user_id = request.POST.get('id')
+        try:
+            user = User.objects.get(id=user_id)
+            if user.has_subscription() is True:
+                try:
+                    order = Order.objects.get(user=user, status='completed', is_active=True,
+                                              expiration_date__gt=timezone.now())
+                    order.is_active = False
+                    order.save()
+                    return add_success_response({'message': 'Subscription deactivated'})
+                except:
+                    pass
+
+            return add_error_response({'message': 'User has no active subscription'})
+        except User.DoesNotExist:
+            return add_error_response({'message': "Invalid user"})
+
+
 class AppLoginOTPSendView(views.APIView):
     permission_classes = (permissions.AllowAny, )
 

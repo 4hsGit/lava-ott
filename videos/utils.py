@@ -48,8 +48,8 @@ def subscription_exists(user):
 
     orders = Order.objects.filter(user=user, status='completed')
     now_date = timezone.now()
-    current_orders = orders.filter(start_date__lte=now_date, expiration_date__gt=now_date)
-    later_orders = orders.filter(start_date__gte=now_date, expiration_date__gt=now_date)
+    current_orders = orders.filter(start_date__lte=now_date, expiration_date__gt=now_date, is_active=True)
+    later_orders = orders.filter(start_date__gte=now_date, expiration_date__gt=now_date, is_active=True)
 
     curr_order = None
     if current_orders.exists():
