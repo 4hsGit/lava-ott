@@ -265,24 +265,12 @@ class AppLoginOTPSendView(views.APIView):
         if serializer.is_valid():
             mobile_number = request.data.get('mobile_number')
             otp_data = request.data.get('otp_data')
-            # user = authenticate(request, mobile_number=mobile_number)
-            # if user is None:
-            #     return add_error_response({'message': 'Mobile number is not registered.'})
-
-            # account_sid = "AC9b697e7816c22010ceede5954b66f002"
-            # auth_token = "78ac2d5732cd5efcfb3f8807d2f0aeae"
-            # verify_sid = "VA653068d77433d8edeca4621c2931e41a"
-            # verify_sid = "VA22e388ede9ab939094d6bff689f0aa6d"
-            # verified_number = "+918078749212"
-            verified_number = '+91' + mobile_number
-
-            # client = Client(account_sid, auth_token)
 
             try:
-                # verification = client.verify.v2.services(verify_sid) \
-                #     .verifications \
-                #     .create(to=verified_number, channel="sms")
-                # print(verification.status)
+
+                from django.conf import settings
+                if settings.BY_PASS_VERIFY is True:
+                    return add_success_response({"message": 'OTP sent'})
 
                 from .utils import send_otp
                 otp_response = send_otp(mobile_number)
@@ -320,24 +308,10 @@ class AppLoginView(views.APIView):
             print('keep_me_logged_in: ', keep_me_logged_in)
 
             try:
-                # account_sid = "AC9b697e7816c22010ceede5954b66f002"
-                # auth_token = "e159554f92a409e53f093c9883bc01bb"
-                # verify_sid = "VA653068d77433d8edeca4621c2931e41a"
-                # verify_sid = "VA22e388ede9ab939094d6bff689f0aa6d"
-                # verified_number = "+918078749212"
-                verified_number = '+91' + str(mobile_number)
 
-                # client = Client(account_sid, auth_token)
-                # verification_check = client.verify.v2.services(verify_sid) \
-                #     .verification_checks \
-                #     .create(to=verified_number, code=otp)
-                # verification_status = verification_check.status
-                # print(verification_status)
-                # verification_status = 'approved'
-
-                # if verification_status == 'approved' and str(otp) == '123456':
-                #     response = {'status': 'success', 'verification_status': verification_status,
-                #                 'message': 'OTP Verified', 'new_user': True}
+                from django.conf import settings
+                if settings.BY_PASS_VERIFY is True:
+                    return add_success_response({"message": 'OTP Verified'})
 
                 from .utils import verify_otp
                 otp_response = verify_otp(otp, mobile_number)
