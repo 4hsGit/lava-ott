@@ -253,6 +253,31 @@ class AdminUserUnsubscribeView(views.APIView):
             return add_error_response({'message': "Invalid user"})
 
 
+class AppLoginView(views.APIView):
+    def post(self, request):
+        serializer = OTPSendSerializer(data=request.data)
+        response = {}
+        if serializer.is_valid():
+            mobile_number = request.data.get('mobile_number')
+            keep_me_logged_in = serializer.data.get('keep_me_logged_in')
+
+            print('keep me logged in == ', keep_me_logged_in)
+
+            user = authenticate(request, mobile_number=mobile_number)
+            if user is not None:
+                CustomSession.delete_expired_sessions()
+
+                token = CustomSession.set_session(user, session_type='app', keep_me_logged_in=keep_me_logged_in)
+                token = jwt_encode(token)
+                response.update({'new_user': False, 'token': token})
+            else:
+                response.update({'new_user': True})
+            return Response(response)
+        else:
+            return add_error_response(format_errors(serializer.errors), status=400)
+
+
+
 class AppLoginOTPSendView(views.APIView):
     permission_classes = (permissions.AllowAny, )
 
@@ -293,7 +318,7 @@ class AppLoginOTPSendView(views.APIView):
             return add_error_response(format_errors(serializer.errors), status=400)
 
 
-class AppLoginView(views.APIView):
+class AppLoginVerifyView(views.APIView):
     permission_classes = (permissions.AllowAny, )
 
     def post(self, request):

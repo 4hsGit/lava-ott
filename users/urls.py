@@ -7,8 +7,9 @@ urlpatterns = [
     path('status/', StatusView.as_view()),
     path('logout/', AdminLogoutView.as_view()),
 
+    path('app/login/', AppLoginView.as_view()),
     path('app/login-otp-send/', AppLoginOTPSendView.as_view()),
-    path('app/login-otp-verify/', AppLoginView.as_view()),
+    path('app/login-otp-verify/', AppLoginVerifyView.as_view()),
 
     path('otp-send/', OTPSendView.as_view()),
     path('delete-otp-verify/', UserDeleteOTPVerifyView.as_view()),

@@ -10,6 +10,7 @@ class LoginSerializer(serializers.Serializer):
 class OTPSendSerializer(serializers.Serializer):
     mobile_number = serializers.IntegerField(min_value=1000000000, max_value=9999999999)
     otp_data = serializers.BooleanField(default=False)
+    keep_me_logged_in = serializers.BooleanField(default=True)
 
 
 class OTPVerfySerializer(serializers.Serializer):
