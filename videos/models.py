@@ -26,7 +26,8 @@ class Video(models.Model):
 class Order(models.Model):
     STATUS_CHOICES = [('pending', 'pending'), ('completed', 'completed')]
 
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    user = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
+    mobile_number = models.CharField(max_length=100, blank=True, null=True)
 
     subscription_amount = models.FloatField()
     subscription_period = models.CharField(max_length=10)

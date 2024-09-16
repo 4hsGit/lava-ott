@@ -38,7 +38,7 @@ class OrderCreateView(APIView):
             return add_error_response({'error': 'Order already exist.'})
 
         if serializer.is_valid():
-            obj = serializer.save(user=user)
+            obj = serializer.save(user=user, mobile_number=user.mobile_number)
             print(obj)
             return Response({'status': 'success', 'message': 'Order created', 'data': get_order(obj)})
         else:
