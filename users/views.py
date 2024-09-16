@@ -272,15 +272,20 @@ class AppLoginOTPSendView(views.APIView):
                 if settings.BY_PASS_VERIFY is True:
                     return add_success_response({"message": 'OTP sent'})
 
+                cont = {}
+
                 from .utils import send_otp
                 otp_response = send_otp(mobile_number)
+
+                if otp_data:
+                    cont.update({'otp_data': otp_response})
+
                 if otp_response['Status'] == 'Success':
-                    cont = {"message": 'OTP sent'}
-                    if otp_data:
-                        cont.update({'otp_data': otp_response})
+                    cont.update({"message": 'OTP sent'})
                     return add_success_response(cont)
                 else:
-                    return add_error_response({'message': otp_response['Details']})
+                    cont.update({'message': otp_response['Details']})
+                    return add_error_response(cont)
             except Exception as e:
                 print('OTP send Exception - ', str(e))
                 return add_error_response({'message': 'Couldn\'t send otp.'})
