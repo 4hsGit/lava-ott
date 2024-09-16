@@ -2,14 +2,14 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['api.lavaott.com']
+ALLOWED_HOSTS = ['api.lavaott.com', '164.52.218.69']
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mylava',
-        'USER': 'mylavauser',
-        'PASSWORD': 'mylava@2024',
+        'NAME': 'lavapdn',
+        'USER': 'lava',
+        'PASSWORD': 'ayMocMo9ZBxS8n3',
         'HOST': 'localhost',
         'PORT': '',
     }
