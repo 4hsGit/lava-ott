@@ -131,7 +131,7 @@ class VideoPlayView(APIView):
                 video.save()
                 # refresh DB
                 video.refresh_from_db()
-                return add_success_response({'data': get_video(video)})
+                return add_success_response({'data': get_video(video, app=True)})
             except Video.DoesNotExist:
                 return add_error_response({
                     'is_subscribed': is_subscribed,
