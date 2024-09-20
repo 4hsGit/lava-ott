@@ -4,27 +4,27 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['api.lavaott.com', '164.52.218.69']
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'lavapdn',
-#         'USER': 'lava',
-#         'PASSWORD': 'ayMocMo9ZBxS8n3',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'mylava',
-        'USER': 'mylavauser',
-        'PASSWORD': 'mylava@2024',
+        'NAME': 'lavaproject',
+        'USER': 'lavadbuser',
+        'PASSWORD': 'lava#dep2024',
         'HOST': 'localhost',
         'PORT': '',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'mylava',
+#         'USER': 'mylavauser',
+#         'PASSWORD': 'mylava@2024',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
 
 CORS_ALLOW_ALL_ORIGINS = True
 
