@@ -20,7 +20,7 @@ class VideoListAppView(APIView):
         page = get('page', 1)
         per_page = get('per_page', 10)
 
-        videos = Video.objects.filter(view_on_app=True)
+        videos = Video.objects.filter(view_on_app=True).order_by('-id')
         data = get_paginated_list(videos, page, per_page)
         # serializer = VideoListSerializer(data['data'], many=True)
         # data['data'] = serializer.data
@@ -131,7 +131,7 @@ class VideoPlayView(APIView):
                 video.save()
                 # refresh DB
                 video.refresh_from_db()
-                return add_success_response({'data': get_video(video)})
+                return add_success_response({'data': get_video(video, app=True)})
             except Video.DoesNotExist:
                 return add_error_response({
                     'is_subscribed': is_subscribed,
