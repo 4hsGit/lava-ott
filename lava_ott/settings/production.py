@@ -60,3 +60,4 @@ OTP_SEND = True
 
 BY_PASS_VERIFY = False
 
+SECURE_SSL_REDIRECT = True
