@@ -18,7 +18,7 @@ class CustomMiddleWare:
                                '/api/users/app/login-otp-send/',
                                '/api/users/app/login-otp-verify/',
                                '/api/videos/app-change-order-period/',
-                               '/lavaott_media/',
+                               '/lavaott-media/',
                                )
         self.admin_paths = [
             '/api/users/setproject/',

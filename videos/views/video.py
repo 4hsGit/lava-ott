@@ -28,12 +28,12 @@ class VideoCreateView(APIView):
 
             # Set duration
             # Moviepy
-            from moviepy.video.io.VideoFileClip import VideoFileClip
+            # from moviepy.video.io.VideoFileClip import VideoFileClip
             from django.conf import settings
             import os
             # Opencv
             import cv2
-            file_path = os.path.join(settings.MEDIA_URL, obj.file.name)
+            file_path = os.path.join(settings.MEDIA_ROOT, obj.file.name)
             print(file_path)
             # clip = VideoFileClip(file_path)
             # d = clip.duration
@@ -43,11 +43,11 @@ class VideoCreateView(APIView):
             cv = cv2.VideoCapture(file_path)
             fps = cv.get(cv2.CAP_PROP_FPS)
             seconds = cv.get(cv2.CAP_PROP_FRAME_COUNT)
-            duration = seconds / fps
 
             print('----------- opencv response -----------')
             print('fps -- ', fps)
             print('sec -- ', seconds)
+            duration = seconds / fps
             print('duration -- ', duration)
 
             obj.duration = duration

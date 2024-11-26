@@ -39,6 +39,14 @@ CORS_ALLOW_HEADERS = [
 
 OTP_SEND = True
 
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_FILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static', 'lavaott_media')
+MEDIA_URL = 'lavaott-media/'
+
+
 # LOGGING = {
 #     'version': 1,
 #     'disable_existing_loggers': False,
