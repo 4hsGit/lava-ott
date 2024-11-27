@@ -33,8 +33,8 @@ class VideoCreateView(APIView):
             import os
             # Opencv
             import cv2
-            file_path = os.path.join(settings.MEDIA_ROOT, obj.file.name)
-            print(file_path)
+            file_path = settings.MEDIA_ROOT + '/', obj.file.name
+            print('file path = ', file_path)
             # clip = VideoFileClip(file_path)
             # d = clip.duration
             # print('duration  = ', d)
