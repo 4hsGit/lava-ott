@@ -13,3 +13,6 @@ if env == 'testing':
     from .testing import *
 if env == 'production':
     from .production import *
+
+print('STATIC_URL = ', STATIC_ROOT)
+print('MEDIA_URL', MEDIA_ROOT)
