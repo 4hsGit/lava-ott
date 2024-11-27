@@ -39,12 +39,12 @@ CORS_ALLOW_HEADERS = [
 
 OTP_SEND = True
 
-STATIC_URL = '/static/'
+STATIC_URL = '/lava-static/'
 STATIC_ROOT = '/var/backend-static/'
 STATIC_FILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 MEDIA_ROOT = '/var/backend-static/media/'
-MEDIA_URL = '/lavaott-media/'
+MEDIA_URL = '/lava-media/'
 
 
 # LOGGING = {
