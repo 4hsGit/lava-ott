@@ -2,8 +2,8 @@ from .base import *
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['lavaott.com', '164.52.200.90', 'www.lavaott.com']
-# ALLOWED_HOSTS = ['api.lavaott.com', '164.52.200.90']
+# ALLOWED_HOSTS = ['lavaott.com', '164.52.200.90', 'www.lavaott.com']
+ALLOWED_HOSTS = ['api.lavaott.com', '164.52.200.90']
 
 DATABASES = {
     'default': {
