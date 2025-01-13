@@ -527,8 +527,8 @@ def test_delete_view(request):
     #     obj.delete()
     #     return JsonResponse({'status': 'success', 'message': 'Deleted.'})
 
-    except:
-        return HttpResponseServerError('Something went wrong!')
+    # except:
+    #     return HttpResponseServerError('Something went wrong!')
 
 
 def setproject(request):
