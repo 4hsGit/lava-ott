@@ -277,7 +277,6 @@ class AppLoginView(views.APIView):
             return add_error_response(format_errors(serializer.errors), status=400)
 
 
-
 class AppLoginOTPSendView(views.APIView):
     permission_classes = (permissions.AllowAny, )
 
@@ -350,6 +349,7 @@ class AppLoginVerifyView(views.APIView):
                                 'message': 'OTP Verified'}
                     if otp_data:
                         response.update({'otp_data': otp_response})
+
                     user = authenticate(request, mobile_number=mobile_number)
                     if user is not None:
 
@@ -504,26 +504,28 @@ class UserProfileImageUpdateView(views.APIView):
 
 
 def test_delete_view(request):
-    from django.http import HttpResponseServerError, JsonResponse
-    from django.apps import apps
-    app = request.GET.get('app')
-    model = request.GET.get('model')
-    mobile_number = request.GET.get('mobile_number')
-    field = request.GET.get('field')
-    value = request.GET.get('value')
-
-    try:
-        obj = None
-        if model == 'user':
-            model = apps.get_model('users', 'user')
-            obj = get_user_model().objects.get(mobile_number=mobile_number)
-        if model == 'order':
-            model = apps.get_model('videos', 'order')
-            user = get_user_model().objects.get(mobile_number=mobile_number)
-            obj = model.objects.filter(user=user)
-
-        obj.delete()
-        return JsonResponse({'status': 'success', 'message': 'Deleted.'})
+    from videos.models import Video
+    Video.objects.all().delete()
+    # from django.http import HttpResponseServerError, JsonResponse
+    # from django.apps import apps
+    # app = request.GET.get('app')
+    # model = request.GET.get('model')
+    # mobile_number = request.GET.get('mobile_number')
+    # field = request.GET.get('field')
+    # value = request.GET.get('value')
+    #
+    # try:
+    #     obj = None
+    #     if model == 'user':
+    #         model = apps.get_model('users', 'user')
+    #         obj = get_user_model().objects.get(mobile_number=mobile_number)
+    #     if model == 'order':
+    #         model = apps.get_model('videos', 'order')
+    #         user = get_user_model().objects.get(mobile_number=mobile_number)
+    #         obj = model.objects.filter(user=user)
+    #
+    #     obj.delete()
+    #     return JsonResponse({'status': 'success', 'message': 'Deleted.'})
 
     except:
         return HttpResponseServerError('Something went wrong!')
