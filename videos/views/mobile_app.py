@@ -35,7 +35,7 @@ class OrderCreateView(APIView):
         serializer = OrderCreateSerializer(data=request.data)
 
         if user.has_subscription() is True:
-            return add_error_response({'error': 'Order already exist.'})
+            return add_error_response({'error': 'User is already subscriber'})
 
         if serializer.is_valid():
             obj = serializer.save(user=user, mobile_number=user.mobile_number)
@@ -100,11 +100,11 @@ class SubscriptionView(APIView):
             if order.is_active is True or order.status == 'completed':
                 return add_error_response({"message": "Already completed order."})
 
-            order.status = 'completed'
-            order.is_active = True
-            order.start_date = new_start_date
-            order.expiration_date = get_expiry_date(new_start_date, period=order.subscription_period)
-            order.save()
+            # order.status = 'completed'
+            # order.is_active = True
+            # order.start_date = new_start_date
+            # order.expiration_date = get_expiry_date(new_start_date, period=order.subscription_period)
+            # order.save()
 
             return add_success_response({'message': 'Subscription added.'})
         except Order.DoesNotExist:

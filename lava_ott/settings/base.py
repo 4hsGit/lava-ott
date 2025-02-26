@@ -13,6 +13,8 @@ import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+import payment.apps
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 print('base dir -> ', BASE_DIR)
 # BASE_DIR = Path(__file__).resolve().parent.parent
@@ -48,7 +50,8 @@ INSTALLED_APPS = [
     'storages',
     # local apps
     'users.apps.UsersConfig',
-    'videos.apps.VideosConfig'
+    'videos.apps.VideosConfig',
+    'payment.apps.PaymentConfig',
 ]
 
 MIDDLEWARE = [
@@ -199,11 +202,11 @@ AWS_S3_URL_PROTOCOL = 'https:'
 # AWS_DEFAULT_ACL = None
 
 # Static and media file configuration
-STATIC_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/static/'
+# STATIC_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/static/'
 # STATIC_ROOT = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}'
 # STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
-MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/'
+# MEDIA_URL = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}/'
 # MEDIA_ROOT = f'{AWS_S3_URL_PROTOCOL}//{AWS_S3_CUSTOM_DOMAIN}'
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
 
@@ -223,3 +226,9 @@ OTP_VERIFY_URL = 'https://2factor.in/API/V1/{}/SMS/VERIFY3/{}/{}'
 VERIFIED_NUMBERS = ['8075554765']
 VERIFIED_OTPS = ['123456']
 BY_PASS_VERIFY = True
+
+PAYMENT_URL_CONFIG = {
+    'base_url': 'http://127.0.0.1:8000/',
+    'response_url': 'http://127.0.0.1:8000/payment/response/',
+    'order_create_url': 'https://api.razorpay.com/v1/orders'
+}

@@ -19,6 +19,10 @@ class CustomMiddleWare:
                                '/api/users/app/login-otp-verify/',
                                '/api/videos/app-change-order-period/',
                                '/lavaott-media/',
+
+                               # Payment
+                               # '/payment/'
+                               '/payment/response/'
                                )
         self.admin_paths = [
             '/api/users/setproject/',
@@ -46,6 +50,7 @@ class CustomMiddleWare:
         if not self.is_excluded_path(url_path):
 
             x_auth = request.META.get('HTTP_XAUTH')
+            # x_auth = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IkFJOVhFYnVfR215M2ZjREZmRkh3UzlENWs4X0RhblZ0bHZNTUhKbk5uNmc9IiwiaWF0IjoxNzQwNTc5NjEwfQ.0dtvFXpUCILrOcDXgmTCG7lFaVW-t5konVUWfmLXFfg'
             # print('authtoken: ', x_auth)
             if x_auth is None:
                 return JsonResponse({'logged_in': False, 'message': 'No token found'}, status=401)

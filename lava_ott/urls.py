@@ -25,6 +25,7 @@ url_prefix = 'api/'
 urlpatterns = [
     path('lvadmin/', admin.site.urls),
     path(f'{url_prefix}users/', include('users.urls')),
-    path(f'{url_prefix}videos/', include('videos.urls'))
+    path(f'{url_prefix}videos/', include('videos.urls')),
+    path(f'payment/', include('payment.urls'))
 ]
 # + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

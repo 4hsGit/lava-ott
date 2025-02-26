@@ -69,4 +69,12 @@ MEDIA_URL = '/lava-media/'
 
 BY_PASS_VERIFY = False
 
-# SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
+
+
+PAYMENT_URL_CONFIG = {
+    'base_url': 'https://api.lavaott.com/',
+    'response_url': 'https://api.lavaott.com/payment/response/',
+    'order_create_url': 'https://api.razorpay.com/v1/orders'
+}
+
