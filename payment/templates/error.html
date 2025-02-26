@@ -42,7 +42,11 @@
 <body>
   <div class="container">
     <img src="https://cdn.dribbble.com/users/2469324/screenshots/6538803/comp_3.gif" alt="Error GIF">
+    {% if main_msg %}
+    <h1>{{ main_msg }}</h1>
+    {% else %}
     <h1>Payment Failed</h1>
+    {% endif %}
     {% if err_msg %}
     <p>{{ err_msg }}</p>
     {% else %}

@@ -36,6 +36,10 @@ class PaymentCheckoutTestView(APIView):
         return order_id
 
     def get(self, request):
+        # Is Subscriber
+        if request.customuser.has_subscription() is True:
+            return render(request, 'error.html', {'main_msg': 'User has subscription already.'})
+
         try:
             order_id = self.get_order_id()
 
