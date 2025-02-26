@@ -132,7 +132,11 @@ class PaymentResponseView(APIView):
             except:
                 return JsonResponse({'message': 'Invalid order ID'})
 
+        # Payment Success
         else:
+            from django.utils import timezone
+            from videos.utils import get_expiry_date
+
             razorpay_payment_id = response_data.get('razorpay_payment_id')
             razorpay_order_id = response_data.get('razorpay_order_id')
             razorpay_signature = response_data.get('razorpay_signature')
@@ -142,6 +146,14 @@ class PaymentResponseView(APIView):
                 transaction.payment_timestamp = datetime.datetime.now()
                 transaction.payment_id = razorpay_payment_id
                 transaction.save()
+
+                new_start_date = timezone.now()
+                order = transaction.order
+                order.status = 'completed'
+                order.is_active = True
+                order.start_date = new_start_date
+                order.expiration_date = get_expiry_date(new_start_date, period=order.subscription_period)
+                order.save()
 
                 return render(request, 'success.html')
             except:
