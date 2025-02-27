@@ -101,7 +101,7 @@ class PaymentCheckoutTestView(APIView):
             # return render(self.request, 'checkout1.html', context={'data': res_dict})
             return render(self.request, 'checkout.html', context={'data': res_dict})
         except Exception as e:
-            print(str(e))
+            return JsonResponse({'message': str(e)})
 
 
 class PaymentResponseView(APIView):
