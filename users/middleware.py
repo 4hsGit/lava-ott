@@ -21,7 +21,7 @@ class CustomMiddleWare:
                                '/lavaott-media/',
 
                                # Payment
-                               '/payment/checkout'
+                               '/payment/'
                                )
         self.admin_paths = [
             '/api/users/setproject/',
