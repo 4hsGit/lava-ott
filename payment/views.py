@@ -165,8 +165,6 @@ class PaymentCheckoutView(PaymentCheckoutTestView):
     def get_key_config(self):
         return live_config
 
-    def get_order_id(self):
-        order_id = self.request.POST.get('id', 10)
-        if not order_id:
-            order_id = self.request.GET.get('id', None)
-        return order_id
+    def get_order_id(self, order_id):
+        from base64 import b64decode
+        return b64decode(order_id).decode()[6:]
