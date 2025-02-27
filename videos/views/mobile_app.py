@@ -40,7 +40,13 @@ class OrderCreateView(APIView):
         if serializer.is_valid():
             obj = serializer.save(user=user, mobile_number=user.mobile_number)
             print(obj)
-            return Response({'status': 'success', 'message': 'Order created', 'data': get_order(obj)})
+            from base64 import b64encode
+            enc_id = b64encode(('123456' + str(obj.id)).encode())
+            checkout_url = f'https://api.lavaott.com/payment/checkout/{enc_id.decode()}/'
+            return Response({'status': 'success', 'message': 'Order created',
+                             # 'data': get_order(obj),
+                             'checkout_url': checkout_url
+                             })
         else:
             return Response({'status': 'error', 'error': format_errors(serializer.errors)})
 

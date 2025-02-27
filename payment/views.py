@@ -29,19 +29,15 @@ class PaymentCheckoutTestView(APIView):
     def get_key_config(self):
         return test_config
 
-    def get_order_id(self):
-        order_id = self.request.POST.get('id', 1)
-        if not order_id:
-            order_id = self.request.GET.get('id', None)
-        return order_id
+    def get_order_id(self, order_id):
+        from base64 import b64decode
+        return b64decode(order_id).decode()[6:]
 
-    def get(self, request):
-        # Is Subscriber
-        if request.customuser.has_subscription() is True:
-            return render(request, 'error.html', {'main_msg': 'User has subscription already.'})
+    def get(self, request, **kwargs):
 
         try:
-            order_id = self.get_order_id()
+            order_id = kwargs.get('id')
+            order_id = self.get_order_id(order_id)
 
             try:
                 order_obj = Order.objects.get(id=order_id)
@@ -99,7 +95,7 @@ class PaymentCheckoutTestView(APIView):
                 'key_id': config['key_id'],
                 'response_url': url_config['response_url'],
                 # 'name': request.customuser if request.customuser else '',
-                'contact': request.customuser.mobile_number if request.customuser else '',
+                # 'contact': request.customuser.mobile_number if request.customuser else '',
             })
 
             # return render(self.request, 'checkout1.html', context={'data': res_dict})
