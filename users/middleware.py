@@ -21,8 +21,7 @@ class CustomMiddleWare:
                                '/lavaott-media/',
 
                                # Payment
-                               # '/payment/'
-                               '/payment/response/'
+                               '/payment/checkout'
                                )
         self.admin_paths = [
             '/api/users/setproject/',
@@ -50,7 +49,6 @@ class CustomMiddleWare:
         if not self.is_excluded_path(url_path):
 
             x_auth = request.META.get('HTTP_XAUTH')
-            # x_auth = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IkdGWTVPcEpFNnlNdVN1dG5LdFBFN29CWk1lU2hRc24xZm1OYTdHT0lsNk09IiwiaWF0IjoxNzQwNTgyODY0fQ.C4ru6a3he3MHyCwu4C45zzSZYhhZy0BUPjThTiHIekU'
             # print('authtoken: ', x_auth)
             if x_auth is None:
                 return JsonResponse({'logged_in': False, 'message': 'No token found'}, status=401)
