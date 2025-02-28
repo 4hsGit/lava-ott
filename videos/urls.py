@@ -31,6 +31,7 @@ urlpatterns += [
     path('app-check-subscription/', CheckSubscriptionView.as_view(), name='app-check-subscription'),
     path('app-subscription-create/', SubscriptionView.as_view(), name='app-subscription-create'),
     path('app-video-play/', VideoPlayView.as_view(), name='app-video-play'),
+    path('app-transaction-history/', TransactionHistoryView.as_view(), name='app-transaction-history'),
     # test
     path('app-change-order-period/', ChangeSubscriptionPeriod.as_view(), name='app-change-order-period'),
 ]

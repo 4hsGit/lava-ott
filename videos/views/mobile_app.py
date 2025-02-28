@@ -149,6 +149,24 @@ class VideoPlayView(APIView):
             })
 
 
+from payment.models import Transaction
+from payment.views import get_transaction
+
+
+class TransactionHistoryView(APIView):
+    def get(self, request):
+        get = request.GET.get
+        page = get('page', 1)
+        per_page = get('per_page', 10)
+
+        user = request.customuser
+
+        transaction = Transaction.objects.filter(order__user=user)
+        data = get_paginated_list(transaction, page, per_page)
+        data['data'] = [get_transaction(i) for i in data['data']]
+        return add_success_response(data)
+
+
 class ChangeSubscriptionPeriod(APIView):
     def get(self, request):
         from datetime import datetime
