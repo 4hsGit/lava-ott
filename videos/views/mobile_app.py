@@ -150,10 +150,22 @@ class VideoPlayView(APIView):
 
 
 from payment.models import Transaction
-from payment.views import get_transaction
 
 
 class TransactionHistoryView(APIView):
+
+    def get_transaction(self, obj):
+        return {
+            "id": obj.id,
+            "amount": obj.amount,
+            "receipt": obj.receipt,
+            "status": obj.status,
+            "initiated_date": obj.timestamp.strftime("%d-%m-%Y %H:%M") if obj.timestamp else '',
+            "payment_date": obj.payment_timestamp.strftime("%d-%m-%Y %H:%M") if obj.payment_timestamp else '',
+            "payment_id": obj.payment_id,
+            "order_id": obj.razorpay_order_id
+        }
+
     def get(self, request):
         get = request.GET.get
         page = get('page', 1)
@@ -163,7 +175,7 @@ class TransactionHistoryView(APIView):
 
         transaction = Transaction.objects.filter(order__user=user)
         data = get_paginated_list(transaction, page, per_page)
-        data['data'] = [get_transaction(i) for i in data['data']]
+        data['data'] = [self.get_transaction(i) for i in data['data']]
         return add_success_response(data)
 
 
