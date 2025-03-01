@@ -232,3 +232,8 @@ PAYMENT_URL_CONFIG = {
     'response_url': 'http://127.0.0.1:8000/payment/response/',
     'order_create_url': 'https://api.razorpay.com/v1/orders'
 }
+
+PAYMENT_CONFIG = {
+    "key_id": 'rzp_test_8WbpTdlodzPfrX',
+    "key_secret": 'ePOFb4Erm2znCYGJnkFDlgrO'
+}

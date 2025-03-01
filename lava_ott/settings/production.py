@@ -78,3 +78,8 @@ PAYMENT_URL_CONFIG = {
     'order_create_url': 'https://api.razorpay.com/v1/orders'
 }
 
+
+PAYMENT_CONFIG = {
+    "key_id": 'rzp_test_8WbpTdlodzPfrX',
+    "key_secret": 'ePOFb4Erm2znCYGJnkFDlgrO'
+}

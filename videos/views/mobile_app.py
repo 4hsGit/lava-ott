@@ -11,6 +11,8 @@ from ..serializers import (
 )
 from ..utils import get_order, get_video
 from users.utils import get_paginated_list, format_errors, add_error_response, add_success_response
+from payment.models import Transaction
+from django.conf import settings
 
 
 class VideoListAppView(APIView):
@@ -34,8 +36,8 @@ class OrderCreateView(APIView):
         user = request.customuser
         serializer = OrderCreateSerializer(data=request.data)
 
-        if user.has_subscription() is True:
-            return add_error_response({'error': 'User is already subscriber'})
+        # if user.has_subscription() is True:
+        #     return add_error_response({'error': 'User is already subscriber'})
 
         if serializer.is_valid():
             obj = serializer.save(user=user, mobile_number=user.mobile_number)
@@ -43,6 +45,7 @@ class OrderCreateView(APIView):
             from base64 import b64encode
             enc_id = b64encode(('123456' + str(obj.id)).encode())
             checkout_url = f'https://api.lavaott.com/payment/checkout/{enc_id.decode()}/'
+            # checkout_url = f'http://127.0.0.1:8000/payment/checkout-test/{enc_id.decode()}/'
             return Response({'status': 'success', 'message': 'Order created',
                              # 'data': get_order(obj),
                              'checkout_url': checkout_url
@@ -149,9 +152,6 @@ class VideoPlayView(APIView):
             })
 
 
-from payment.models import Transaction
-
-
 class TransactionHistoryView(APIView):
 
     def get_transaction(self, obj):
@@ -166,6 +166,24 @@ class TransactionHistoryView(APIView):
             "order_id": obj.razorpay_order_id
         }
 
+    def update_status(self, trans):
+        import requests
+        from requests.auth import HTTPBasicAuth
+        from json import loads
+        from datetime import timedelta
+        from django.utils import timezone
+
+        config = settings.PAYMENT_CONFIG
+
+        expiry = timezone.now() - timedelta(hours=12)
+        for i in trans.filter(status='created', timestamp__gte=expiry):
+            res = requests.get(f'https://api.razorpay.com/v1/orders/{i.razorpay_order_id}',
+                               auth=HTTPBasicAuth(config['key_id'], config['key_secret']))
+            res = loads(res.text)
+            if res['status'] != i.status:
+                i.status = res['status']
+                i.save()
+
     def get(self, request):
         get = request.GET.get
         page = get('page', 1)
@@ -173,7 +191,9 @@ class TransactionHistoryView(APIView):
 
         user = request.customuser
 
-        transaction = Transaction.objects.filter(order__user=user)
+        transaction = Transaction.objects.filter(order__user=user).order_by('-id')
+        if page in (1, '1'):
+            self.update_status(transaction)
         data = get_paginated_list(transaction, page, per_page)
         data['data'] = [self.get_transaction(i) for i in data['data']]
         return add_success_response(data)
