@@ -36,12 +36,11 @@ class OrderCreateView(APIView):
         user = request.customuser
         serializer = OrderCreateSerializer(data=request.data)
 
-        # if user.has_subscription() is True:
-        #     return add_error_response({'error': 'User is already subscriber'})
+        if user.has_subscription() is True:
+            return add_error_response({'error': 'User is already subscriber'})
 
         if serializer.is_valid():
             obj = serializer.save(user=user, mobile_number=user.mobile_number)
-            print(obj)
             from base64 import b64encode
             enc_id = b64encode(('123456' + str(obj.id)).encode())
             checkout_url = f'https://api.lavaott.com/payment/checkout/{enc_id.decode()}/'
