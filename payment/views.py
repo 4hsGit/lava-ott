@@ -34,6 +34,13 @@ class PaymentCheckoutTestView(APIView):
             except:
                 return JsonResponse({'message': 'Invalid Order'})
 
+            from datetime import timedelta
+            from django.utils import timezone
+            exp_time = timezone.now() - timedelta(minutes=10)
+            trans = Transaction.objects.filter(order=order_obj, timestamp__gte=exp_time)
+            if trans.exists():
+                return render(request, 'error.html', {'err_msg': 'Payment already Initiated. Try after 10 minutes.'})
+
             amount = int(order_obj.subscription_amount)
 
             payload = {
@@ -179,6 +186,13 @@ class PaymentCheckoutView(PaymentCheckoutTestView):
                 order_obj = Order.objects.get(id=order_id)
             except:
                 return JsonResponse({'message': 'Invalid Order'})
+
+            from datetime import timedelta
+            from django.utils import timezone
+            exp_time = timezone.now() - timedelta(minutes=10)
+            trans = Transaction.objects.filter(order=order_obj, timestamp__gte=exp_time)
+            if trans.exists():
+                return render(request, 'error.html', {'err_msg': 'Payment already Initiated. Try after 10 minutes.'})
 
             amount = int(order_obj.subscription_amount)
 

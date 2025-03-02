@@ -34,10 +34,22 @@ class VideoListAppView(APIView):
 class OrderCreateView(APIView):
     def post(self, request):
         user = request.customuser
-        serializer = OrderCreateSerializer(data=request.data)
 
         if user.has_subscription() is True:
             return add_error_response({'error': 'User is already subscriber'})
+
+        from datetime import timedelta
+        exp_time = timezone.now() - timedelta(minutes=10)
+        trans = Transaction.objects.filter(order__user=user, status='created', timestamp__gte=exp_time)
+        print('Transaction count = ', trans.count())
+        if trans.exists():
+            return add_error_response({'error': 'Payment already initiated. Try after 10 minutes'})
+
+        # trans = Transaction.objects.filter(order__user=user, status='attempted')
+        # if trans.exists():
+        #     return add_error_response({'error': 'Payment of the user is under processing. Try again later.'})
+
+        serializer = OrderCreateSerializer(data=request.data)
 
         if serializer.is_valid():
             obj = serializer.save(user=user, mobile_number=user.mobile_number)
