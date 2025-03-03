@@ -36,14 +36,14 @@ class OrderCreateView(APIView):
         user = request.customuser
 
         if user.has_subscription() is True:
-            return add_error_response({'error': 'User is already subscriber'})
+            return add_error_response({'error': 'User is already subscriber'}, status=400)
 
         from datetime import timedelta
         exp_time = timezone.now() - timedelta(minutes=10)
         trans = Transaction.objects.filter(order__user=user, status='created', timestamp__gte=exp_time)
         print('Transaction count = ', trans.count())
         if trans.exists():
-            return add_error_response({'error': 'Payment already initiated. Try after 10 minutes'})
+            return add_error_response({'error': 'Payment already initiated. Try after 10 minutes'}, status=400)
 
         # trans = Transaction.objects.filter(order__user=user, status='attempted')
         # if trans.exists():
