@@ -170,7 +170,7 @@ class UserDeleteView(views.APIView):
         reason = request.POST.get('reason')
 
         from .models import DeletedUser
-        DeletedUser.objects.create(mobile_number=user.mobile_number, reason=reason)
+        DeletedUser.objects.create(mobile_number=user.mobile_number, reason='no reason')
         user.delete()
 
         return add_success_response({'message': 'User deleted successfully'})
