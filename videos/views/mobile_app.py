@@ -20,7 +20,7 @@ class VideoListAppView(APIView):
         # user = request.customuser
         get = request.GET.get
         page = get('page', 1)
-        per_page = get('per_page', 10)
+        per_page = get('per_page', 12)
 
         videos = Video.objects.filter(view_on_app=True).order_by('-id')
         data = get_paginated_list(videos, page, per_page)
