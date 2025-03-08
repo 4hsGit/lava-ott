@@ -5,7 +5,7 @@ from rest_framework import status
 from ..serializers import CarouselSerializer, CarouselListSerializer
 from ..forms import CarouselForm
 from ..models import Carousel
-from users.utils import add_success_response, add_error_response
+from users.utils import add_success_response, add_error_response, format_errors
 from rest_framework.decorators import authentication_classes, permission_classes
 
 
@@ -25,7 +25,7 @@ def carousel_create(request):
         return add_success_response(data, status=status.HTTP_201_CREATED)
 
     else:
-        data = {'error': serializer.errors}
+        data = {'error': format_errors(serializer.errors)}
         return add_error_response(data, status=status.HTTP_400_BAD_REQUEST)
 
 
