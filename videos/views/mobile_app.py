@@ -18,15 +18,18 @@ from django.conf import settings
 class VideoListAppView(APIView):
     def get(self, request):
         # user = request.customuser
-        get = request.GET.get
-        page = get('page', 1)
-        per_page = get('per_page', 12)
+        # get = request.GET.get
+        # page = get('page', 1)
+        # per_page = get('per_page', 12)
 
         videos = Video.objects.filter(view_on_app=True).order_by('-id')
-        data = get_paginated_list(videos, page, per_page)
+        # data = get_paginated_list(videos, page, per_page)
         # serializer = VideoListSerializer(data['data'], many=True)
         # data['data'] = serializer.data
-        data['data'] = [get_video(i) for i in data['data']]
+        # data['data'] = [get_video(i) for i in data['data']]
+        data = {
+            "data": [get_video(i) for i in videos]
+        }
 
         return add_success_response(data)
 
