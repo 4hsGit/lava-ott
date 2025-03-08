@@ -47,7 +47,7 @@ class VideoCreateSerializer(serializers.ModelSerializer):
         max_size = 5 * 1024 * 1024 * 1024  # 5MB in bytes
         if value.size > max_size:
             raise serializers.ValidationError("Video size should not exceed 5GB.")
-        if value.name.split()[-1].strip() not in ('mp4', 'MP4'):
+        if value.name.split('.')[-1].strip() not in ('mp4', 'MP4'):
             raise serializers.ValidationError("Video format should be mp4.")
         return value
 
@@ -55,7 +55,7 @@ class VideoCreateSerializer(serializers.ModelSerializer):
         max_size = 1 * 1024 * 1024 * 1024  # 1GB in bytes
         if value.size > max_size:
             raise serializers.ValidationError("Trailer size should not exceed 1GB.")
-        if value.name.split()[-1].strip() not in ('mp4', 'MP4'):
+        if value.name.split('.')[-1].strip() not in ('mp4', 'MP4'):
             raise serializers.ValidationError("Trailer format should be mp4.")
         return value
 
