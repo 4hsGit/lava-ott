@@ -10,6 +10,9 @@ class CarouselSerializer(serializers.Serializer):
             print(image.size)
             if image.size > 1 * 1024 * 1024:
                 raise serializers.ValidationError("File size should not exceed 1MB.")
+
+            if image.name.split('.')[-1].strip() not in ('jpg', 'JPG', 'jpeg', 'JPEG'):
+                raise serializers.ValidationError("File format should be jpg or jpeg.")
         return value
 
 
