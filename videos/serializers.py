@@ -5,6 +5,13 @@ from .models import Carousel, SubscriptionPlan, Video, Order
 class CarouselSerializer(serializers.Serializer):
     image = serializers.ListField(child=serializers.ImageField(), max_length=8)
 
+    def validate_image(self, value):
+        for image in value:
+            print(image.size)
+            if image.size > 1 * 1024 * 1024:
+                raise serializers.ValidationError("File size should not exceed 1MB.")
+        return value
+
 
 class CarouselListSerializer(serializers.ModelSerializer):
     class Meta:
@@ -35,6 +42,31 @@ class VideoCreateSerializer(serializers.ModelSerializer):
             'cast',
             'created_by'
         )
+
+    def validate_file(self, value):
+        max_size = 5 * 1024 * 1024 * 1024  # 5MB in bytes
+        if value.size > max_size:
+            raise serializers.ValidationError("Video size should not exceed 5GB.")
+        if value.name.split()[-1].strip() not in ('mp4', 'MP4'):
+            raise serializers.ValidationError("Video format should be mp4.")
+        return value
+
+    def validate_trailer(self, value):
+        max_size = 1 * 1024 * 1024 * 1024  # 1GB in bytes
+        if value.size > max_size:
+            raise serializers.ValidationError("Trailer size should not exceed 1GB.")
+        if value.name.split()[-1].strip() not in ('mp4', 'MP4'):
+            raise serializers.ValidationError("Trailer format should be mp4.")
+        return value
+
+    # Validate file size for the thumbnail (1MB)
+    def validate_thumbnail(self, value):
+        max_size = 1 * 1024 * 1024  # 1MB in bytes
+        if value.size > max_size:
+            raise serializers.ValidationError("Thumbnail size should not exceed 1MB.")
+        if value.name.split('.')[-1].strip() not in ('jpg', 'JPG', 'jpeg', 'JPEG'):
+            raise serializers.ValidationError("Thumbnail format should be jpg or jpeg.")
+        return value
 
 
 class VideoListSerializer(serializers.ModelSerializer):
