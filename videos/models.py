@@ -22,6 +22,22 @@ class Video(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(get_user_model(), on_delete=models.SET_NULL, null=True)
 
+    def delete(self, *args, **kwargs):
+        from pathlib import Path
+
+        file_path = Path(self.file.path)
+        trailer_path = Path(self.trailer.path)
+        thumbnail_path = Path(self.thumbnail.path)
+
+        if trailer_path.exists():
+            trailer_path.unlink()
+        if file_path.exists():
+            file_path.unlink()
+        if thumbnail_path.exists():
+            thumbnail_path.unlink()
+
+        super().delete(*args, **kwargs)
+
 
 class Order(models.Model):
     STATUS_CHOICES = [('pending', 'pending'), ('completed', 'completed')]
@@ -49,3 +65,12 @@ class SubscriptionPlan(models.Model):
 
 class Carousel(models.Model):
     image = models.ImageField(upload_to='carousel')
+
+    def delete(self, *args, **kwargs):
+        from pathlib import Path
+        image_path = Path(self.image.path)
+
+        if image_path.exists():
+            image_path.unlink()
+
+        super().delete(*args, **kwargs)
