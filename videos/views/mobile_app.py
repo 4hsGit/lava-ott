@@ -194,6 +194,8 @@ class TransactionHistoryView(APIView):
             res = requests.get(f'https://api.razorpay.com/v1/orders/{i.razorpay_order_id}',
                                auth=HTTPBasicAuth(config['key_id'], config['key_secret']))
             res = loads(res.text)
+            if 'error' in res:
+                continue
             if res['status'] != i.status:
                 i.status = res['status']
                 i.save()
