@@ -80,6 +80,6 @@ PAYMENT_URL_CONFIG = {
 
 
 PAYMENT_CONFIG = {
-    "key_id": 'rzp_test_8WbpTdlodzPfrX',
-    "key_secret": 'ePOFb4Erm2znCYGJnkFDlgrO'
+    "key_id": 'rzp_live_KNVLFuRdQHF0Lu',
+    "key_secret": 'jCmtb49N4bUK7qnuEsE31a2e'
 }
