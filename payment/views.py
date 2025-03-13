@@ -51,12 +51,12 @@ class PaymentCheckoutTestView(APIView):
             # from django.utils import timezone
             exp_time = timezone.now() - timedelta(minutes=10)
             trans = Transaction.objects.filter(order=order_obj, timestamp__gte=exp_time)
-            if trans.exists():
-                return render(request, 'error.html', {'err_msg': 'Payment already Initiated. Try after 10 minutes.'})
+            # if trans.exists():
+            #     return render(request, 'error.html', {'err_msg': 'Payment already Initiated. Try after 10 minutes.'})
 
             trans = Transaction.objects.filter(order=order_obj, status='attempted')
-            if trans.exists():
-                return render(request, 'error.html', {'err_msg': 'Payment under processing. Try again later.'})
+            # if trans.exists():
+            #     return render(request, 'error.html', {'err_msg': 'Payment under processing. Try again later.'})
 
             amount = int(order_obj.subscription_amount)
 
@@ -137,7 +137,11 @@ class PaymentCheckoutView(PaymentCheckoutTestView):
         for i in Transaction.objects.filter(status='created', timestamp__gte=expiry):
             res = requests.get(f'https://api.razorpay.com/v1/orders/{i.razorpay_order_id}',
                                auth=HTTPBasicAuth(config['key_id'], config['key_secret']))
+
             res = loads(res.text)
+            if 'error' in res:
+                continue
+
             if res['status'] != i.status:
                 i.status = res['status']
                 i.save()
